@@ -1,9 +1,9 @@
-import React from 'react'
+import Carousel from "@/components/carousel/Carousel"
 
 function Home() {
   return (
-    <div>
-      Home page
+    <div className='w-full'>
+      <Carousel />
     </div>
   )
 }
