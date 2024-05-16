@@ -6,10 +6,13 @@ import Setting from "@/pages/Setting";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Navbar from "@/components/navbar/Navbar";
+import { Toaster } from "@/components/ui/toaster";
+
 function App() {
   return (
     <div className="w-full h-full px-4">
       <BrowserRouter>
+        <Toaster />
         {/*//todo: App's Layout  */}
         <Navbar />
         {/*//todo: Set-up Routes */}

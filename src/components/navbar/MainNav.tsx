@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from '@/components/ui/button'
-
-const MainNav = () => {
+import { cn } from "@/lib/utils";
+interface MainNavProps {
+    className?: string
+}
+const MainNav: React.FC<MainNavProps> = ({ className }) => {
     const dataNav = [{
         label: 'Buy',
         href: '/buy'
@@ -13,11 +16,10 @@ const MainNav = () => {
         href: '/mortgage'
     }]
     return (
-        <div className="w-full flex flex-row items-center justify-start gap-3">
+        <div className={cn('w-full', className)}>
             {dataNav.map((data, i) => {
-                return <Button key={i} variant='nav'>
-                    <Link to={data.href}>{data.label}</Link>
-                </Button>
+                return <Link key={i} to={data.href}><Button className="font-bold lg:font-normal" variant='nav'>{data.label}</Button></Link>
+
 
             })}
         </div >

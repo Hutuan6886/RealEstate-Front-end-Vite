@@ -6,11 +6,15 @@ import { Input } from "./input"
 import { IoSearchSharp } from "react-icons/io5";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "./form";
+import { cn } from "@/lib/utils";
 
 
 export type SearchFormType = z.infer<typeof SearchFormSchema>
 
-const SearchField = () => {
+interface SearchFieldProps {
+    className?: string
+}
+const SearchField: React.FC<SearchFieldProps> = ({ className }) => {
     const formSchema = useForm<SearchFormType>({
         resolver: zodResolver(SearchFormSchema),
         defaultValues: {
@@ -22,7 +26,7 @@ const SearchField = () => {
         console.log(data);
     }
     return (
-        <div className=" ">
+        <div className={cn(className)}>
             <Form {...formSchema}>
                 <form onSubmit={formSchema.handleSubmit(submitSearch)} className="h-[50px] flex flex-row items-center justify-center">
                     <FormField

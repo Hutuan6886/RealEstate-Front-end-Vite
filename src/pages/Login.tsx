@@ -11,7 +11,7 @@ function Login() {
           </div>
         </FormWrapper>
       </div>
-      <div className="col-span-3 invisible md:visible md:w-full md:h-full bg-fixed bg-center bg-cover bg-no-repeat rounded-[0.375rem] bg-[url('/img/pexels-sevenstormphotography.jpg')]"></div>
+      <div className="col-span-3 hidden md:block md:w-full md:h-full bg-fixed bg-center bg-cover bg-no-repeat rounded-[0.375rem] bg-[url('/img/pexels-sevenstormphotography.jpg')]"></div>
     </div>
   )
 }
