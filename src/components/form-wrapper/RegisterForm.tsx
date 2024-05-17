@@ -48,7 +48,6 @@ const RegisterForm = () => {
                 navigate('/log-in')     //* /register to /log-in
             } else {
                 const { success, message } = await res.json()
-                console.log(res);
                 if (!success) {
                     //* res trả về error
                     toast({
