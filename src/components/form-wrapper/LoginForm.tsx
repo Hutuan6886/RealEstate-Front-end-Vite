@@ -4,22 +4,23 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
-import { FaGithub } from "react-icons/fa"
-import { FcGoogle } from "react-icons/fc"
+
 import { LoginFormSchema } from "@/form_schema/FormSchema"
-import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
-import { useDispatch } from "react-redux"
-import { userLogin } from "@/features/user/userSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { loginLoading, loginSuccess } from "@/features/user/userSlice"
+import Oauth from "./Oauth"
+import { RootState } from "@/redux/store"
 
 type LoginFormType = z.infer<typeof LoginFormSchema>
 const RegisterForm = () => {
-    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const { toast } = useToast()
+    //todo:Redux
     const dispatch = useDispatch()
+    const { isLoading } = useSelector((state: RootState) => state.user)
 
     const loginForm = useForm<LoginFormType>({
         resolver: zodResolver(LoginFormSchema),
@@ -31,7 +32,7 @@ const RegisterForm = () => {
     const submitLogin = async (data: LoginFormType) => {
         // console.log(data);
         try {
-            setIsLoading(true)
+            dispatch(loginLoading())
             const res = await fetch('/api/auth/login', {
                 headers: {
                     "Content-Type": "Application/json"
@@ -43,7 +44,8 @@ const RegisterForm = () => {
             if (res.ok) {
                 //todo: res trả về user sau khi log in thành công
                 const dataUser = await res.json();
-                dispatch(userLogin(dataUser))   //* push dataUser vừa log in lên redux
+
+                dispatch(loginSuccess(dataUser))   //* push dataUser vừa log in lên redux
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Log in user is successfully."
@@ -72,7 +74,6 @@ const RegisterForm = () => {
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
         } finally {
-            setIsLoading(false)
             loginForm.reset()
         }
 
@@ -111,10 +112,7 @@ const RegisterForm = () => {
                 />
 
                 <Button disabled={isLoading} type="submit" className="w-full">{!isLoading ? 'Confirm' : "Loading..."}</Button>
-                <div className="w-full grid grid-cols-2 gap-3">
-                    <Button disabled={isLoading} className="bg-white text-black shadow-md flex gap-1 ring-1 ring-black hover:bg-zinc-100"><FcGoogle size={20} /> Google</Button>
-                    <Button disabled={isLoading} className="bg-white text-black shadow-md flex gap-1 ring-1 ring-black hover:bg-zinc-100"><FaGithub size={20} /> Github</Button>
-                </div>
+                <Oauth />
             </form>
 
         </Form>

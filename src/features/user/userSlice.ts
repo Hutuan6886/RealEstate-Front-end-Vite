@@ -1,14 +1,15 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-type UserType = {
+type UserReduxType = {
   id: string | null;
   userName: string | null;
   email: string | null;
   createAt: string | null;
   updateAt: string | null;
 };
-interface UserState {
-  currentUser: UserType;
+export interface UserState {
+  currentUser: UserReduxType;
+  isLoading: boolean;
 }
 const initialState: UserState = {
   currentUser: {
@@ -18,18 +19,23 @@ const initialState: UserState = {
     createAt: null,
     updateAt: null,
   },
+  isLoading: false,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    userLogin: (state, action: PayloadAction<UserType>) => {
+    loginLoading: (state) => {
+      state.isLoading = true;
+    },
+    loginSuccess: (state, action: PayloadAction<UserReduxType>) => {
       state.currentUser = action.payload;
+      state.isLoading = false;
     },
   },
 });
 
-export const { userLogin } = userSlice.actions;
+export const { loginSuccess, loginLoading } = userSlice.actions;
 
 export default userSlice.reducer;
