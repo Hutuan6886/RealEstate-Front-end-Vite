@@ -20,11 +20,11 @@ export const RegisterFormSchema = z
       .string()
       .min(8, {
         message:
-          "The password is at least 8 characters, includea lowercase letter, an uppercase letter, a number and a special character!",
+          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
       })
       .regex(passwordValidation, {
         message:
-          "The password is at least 8 characters, includea lowercase letter, an uppercase letter, a number and a special character!",
+          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
       }),
     rePassword: z.string(),
   })
@@ -46,3 +46,56 @@ export const LoginFormSchema = z.object({
     message: "The password is not valid",
   }),
 });
+
+export const ProfileForm = z
+  .object({
+    imgUrl: z.string().optional(),
+    userName: z.string().min(3, {
+      message: "The user name is required!",
+    }),
+    gender: z.string().min(1),
+    // birthday: z.date({
+    //   message: "A birthday is required!",
+    // }),
+    birthday: z.string(),
+    address: z.string().min(5, {
+      message: "The address is required!",
+    }),
+    email: z.string().email({
+      message: "The email is invalid!",
+    }),
+    currentPassword: z
+      .string()
+      .min(8, {
+        message:
+          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+      })
+      .regex(passwordValidation, {
+        message:
+          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+      }),
+    newPassword: z
+      .optional(
+        z
+          .string()
+          .min(8, {
+            message:
+              "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+          })
+          .regex(passwordValidation, {
+            message:
+              "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+          })
+      )
+      .or(z.literal("")),
+    reNewPassword: z.optional(z.string().min(8)).or(z.literal("")),
+  })
+  .refine(
+    (values) => {
+      return values.newPassword === values.reNewPassword;
+    },
+    {
+      message: "Re-New Password is not match!",
+      path: ["reNewPassword"],
+    }
+  );

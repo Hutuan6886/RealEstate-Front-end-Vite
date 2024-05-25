@@ -4,6 +4,7 @@ type UserReduxType = {
   id: string | null;
   userName: string | null;
   email: string | null;
+  imgUrl: string | null;
   createAt: string | null;
   updateAt: string | null;
 };
@@ -16,6 +17,7 @@ const initialState: UserState = {
     id: null,
     userName: null,
     email: null,
+    imgUrl: null,
     createAt: null,
     updateAt: null,
   },

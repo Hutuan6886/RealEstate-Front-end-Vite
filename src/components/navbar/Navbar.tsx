@@ -1,14 +1,21 @@
+
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MainNav from "./MainNav";
-import { Button } from "../ui/button";
+import AvatarNav from "./AvatarNav"
+import { Button } from "@/components/ui/button";
 import {
   IoClose,
   IoMenu
 } from "react-icons/io5";
-import { useState } from "react";
+import { RootState } from "@/redux/store";
 
 const Navbar = () => {
   const [isSideBar, setIsSidebar] = useState(false)
+
+  //todo: Redux
+  const { currentUser } = useSelector((state: RootState) => state.user)
 
   return (
     <nav className="relative w-full py-3">
@@ -25,8 +32,12 @@ const Navbar = () => {
             <Button variant='nav'>Saved Searched</Button>
           </div>
           <div className="flex flex-row items-center">
-            <Link to='/register'><Button variant='ghost'> Register</Button></Link>
-            <Link to='/log-in'><Button variant='login'> Log In</Button></Link></div>
+            {!currentUser.id ? <>
+              <Link to='/register'><Button variant='ghost'> Register</Button></Link>
+              <Link to='/log-in'><Button variant='login'> Log In</Button></Link></> : <AvatarNav />
+            }
+
+          </div>
         </div>
         <Button variant="ghost" className="block lg:hidden text-xl hover:bg-transparent"
           onClick={() => { setIsSidebar(!isSideBar) }}

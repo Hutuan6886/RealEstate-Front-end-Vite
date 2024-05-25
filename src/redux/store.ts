@@ -1,6 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import UserReducer from "@/features/user/userSlice"; //* export toàn bộ @/features/user/userSlice đặt tên là UserReducer
-import { combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage"; //* defaults to localStorage for web
 import { persistReducer, persistStore } from "redux-persist";
 
@@ -22,7 +21,12 @@ export const store = configureStore({
   //   //*: Khai báo toàn bộ reducer của app khi không cấu hình redux-persist
   //   user: UserReducer,
   // },
-  reducer: persistedReducer,  //* reducer khi cấu hình redux-persist
+  reducer: persistedReducer, //* reducer khi cấu hình redux-persist
+  middleware: (getDefaultMiddleWare) =>
+    getDefaultMiddleWare({
+      // add middleware to fix for error: "A non-serializable value was detected in an action, in the path:...""
+      serializableCheck: false,
+    }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
@@ -30,4 +34,4 @@ export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
-export const persistor = persistStore(store)  //* export persistStore  
+export const persistor = persistStore(store); //* export persistStore
