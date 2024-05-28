@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useDispatch, useSelector } from "react-redux"
-import { loginLoading, loginSuccess } from "@/features/user/userSlice"
+import { loginFailure, loginLoading, loginSuccess } from "@/features/user/userSlice"
 import Oauth from "./Oauth"
 import { RootState } from "@/redux/store"
 
@@ -75,6 +75,7 @@ const RegisterForm = () => {
             })
         } finally {
             loginForm.reset()
+            dispatch(loginFailure())
         }
 
     }

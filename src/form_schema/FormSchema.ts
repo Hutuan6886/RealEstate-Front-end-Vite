@@ -53,14 +53,13 @@ export const ProfileForm = z
     userName: z.string().min(3, {
       message: "The user name is required!",
     }),
-    gender: z.string().min(1),
-    // birthday: z.date({
-    //   message: "A birthday is required!",
-    // }),
-    birthday: z.string(),
-    address: z.string().min(5, {
-      message: "The address is required!",
-    }),
+    phone: z
+      .string()
+      .min(10, { message: "The phone number must be 10 numbers" })
+      .max(10, { message: "The phone number must be 10 numbers" }),
+    gender: z.string().optional(),
+    birthday: z.string().optional(),
+    address: z.string().optional(),
     email: z.string().email({
       message: "The email is invalid!",
     }),
@@ -99,3 +98,17 @@ export const ProfileForm = z
       path: ["reNewPassword"],
     }
   );
+
+export const ProfileOauthForm = z.object({
+  imgUrl: z.string().optional(),
+  userName: z.string().min(3, {
+    message: "The user name is required!",
+  }),
+  phone: z
+    .string()
+    .min(10, { message: "The phone number must be 10 numbers" })
+    .max(10, { message: "The phone number must be 10 numbers" }),
+  gender: z.string().optional(),
+  birthday: z.string().optional(),
+  address: z.string().optional(),
+});

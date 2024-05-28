@@ -27,7 +27,9 @@ const Oauth = () => {
         const data = {
             userName: result.user.displayName,
             email: result.user.email,
-            imgUrl: result.user.photoURL
+            imgUrl: result.user.photoURL,
+            provider: result.providerId && "oauth",
+            emailVerified: result.user.emailVerified ? new Date() : null,
         }
         console.log('Data google user', result);
         try {
@@ -42,6 +44,7 @@ const Oauth = () => {
             if (res.ok) {
                 //todo: res trả về user sau khi log in thành công
                 const dataUser = await res.json();
+                console.log('Data google data user', dataUser);
                 dispatch(loginSuccess(dataUser))
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',

@@ -1,30 +1,31 @@
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+
 import {
     useEffect,
     useRef,
     useState
 } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import { app } from "@/firebase";
-import { Input } from "@/components/ui/input";
-import { ProfileForm } from "@/form_schema/FormSchema";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import {
+    useSelector,
+    // useDispatch 
+
+} from "react-redux";
 import { RootState } from "@/redux/store";
 import { Link } from "react-router-dom"
 import { RiProfileLine } from "react-icons/ri";
 import { BiSolidDashboard } from "react-icons/bi";
 import { toast } from "@/components/ui/use-toast";
+import { IoTrash } from "react-icons/io5";
+import CredentialsProfile from "../CredentialsProfile/CredentialsProfile";
+import OauthProfile from "../OauthProfile/OauthProfile";
 
 //todo: UPLOAD IMAGE
 //todo: Sử dụng useRef để lấy giá trị của <input type="file" onChange={(e)=>setImageUpload(e....)} ref={fileRef}> thông qua <img onClick={fileRef...}> ---> giá trị onchange của <input type="file"> được save tại imgUpload state là typeof File ---> truyền imgUpload và handleImageUpload(imgUpload:File) function để push img to firebase storage ---> Sau khi POST image request to firebase storage, firebase sẽ trả về response 1 imgUrl typeof string ---> sử dụng imgUrl để hiển thị ---> POST request to DB ---> lưu imgUrl vào user info ở redux
 
-type ProfileFormType = z.infer<typeof ProfileForm>
+
 const Profile = () => {
     //todo: Hook
     const [imgUpload, setImageUpload] = useState<File>()
@@ -32,21 +33,9 @@ const Profile = () => {
     const fileRef = useRef<HTMLInputElement>(null)
     //todo: Redux
     const { currentUser } = useSelector((state: RootState) => state.user)
+    // const dispatch = useDispatch()
 
-    const profileForm = useForm<ProfileFormType>({
-        resolver: zodResolver(ProfileForm),
-        defaultValues: {
-            userName: currentUser.userName || undefined,
-            email: currentUser.email || undefined,
-            gender: "",
-            address: "",
-            birthday: "",
-            currentPassword: "",
-            newPassword: "",
-            reNewPassword: "",
-            imgUrl: "",
-        }
-    })
+
     /* //! FIREBASE RULE (write file < 2MB)
       allow read;
       allow write: if 
@@ -87,9 +76,17 @@ const Profile = () => {
         )
     }
 
-    const submitProfileForm = async (data: ProfileFormType) => {
-        console.log({ ...data, imgUrl: imgFirebaseUrl });
+    const deleteUser = async (userId: string) => {
+        const res = await fetch(`/api/user/delete/${userId}`, {
+            method: 'delete',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cache: 'no-cache'
+        })
+        console.log(res);
     }
+
     return (
         <div className="w-full h-full">
             <div className="w-full h-full grid grid-cols-4">
@@ -107,133 +104,15 @@ const Profile = () => {
                     </div>
                 </div>
                 <div className="col-span-3 flex flex-col items-start gap-11">
-                    <h1 className="font-semibold text-3xl text-teal-700">User Information</h1>
-                    <Form {...profileForm}>
-                        <form onSubmit={profileForm.handleSubmit(submitProfileForm)} className="w-full flex flex-col items-start gap-4">
-                            <div className="w-full grid grid-cols-2 gap-4">
-                                <FormField
-                                    name="userName"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">User Name</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input type="text" placeholder="Lê Hữu Tuân" {...field} />
-                                            </FormControl>
-                                            <FormMessage className="text-sm text-red-600" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="email"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Email</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input type="email" placeholder="tuan@gmail.com" {...field} />
-                                            </FormControl>
-                                            <FormMessage className="text-sm text-red-600" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="gender"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Gender</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl className="rounded-[0.375rem]">
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select gender" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent className="bg-white">
-                                                    <SelectItem value="Male">Male</SelectItem>
-                                                    <SelectItem value="Female">Female</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="birthday"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Birthday date</FormLabel>
-                                            <FormControl className="rounded-[0.375rem]">
-                                                <Input className="cursor-pointer" type="date" {...field} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="address"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Current Address</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input placeholder="1 Street - Ward - District - City" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                    <div className="w-full flex flex-row justify-between items-center gap-4">
+                        <h1 className="font-semibold text-3xl text-teal-700">User Information</h1>
+                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => deleteUser(currentUser.id)}><IoTrash /></Button>
+                    </div>
+                    {/* //todo: Credentials form and Oauth form */}
+                    {currentUser.provider === 'credentials' ? <CredentialsProfile imgFirebaseUrl={imgFirebaseUrl} /> : <OauthProfile imgFirebaseUrl={imgFirebaseUrl} />}
 
-                                <FormField
-                                    name="newPassword"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">New Password</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input type="password" placeholder="••••••••" {...field} />
-                                            </FormControl >
-                                            <FormMessage className="text-sm text-red-600" />
-                                            <FormDescription></FormDescription>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="currentPassword"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Current Password</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input type="password" placeholder="••••••••" {...field} />
-                                            </FormControl>
-                                            <FormMessage className="text-sm text-red-600" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    name="reNewPassword"
-                                    control={profileForm.control}
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-1">
-                                            <FormLabel className="font-semibold">Re-New Password</FormLabel>
-                                            <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                                <Input type="password" placeholder="••••••••" {...field} />
-                                            </FormControl>
-                                            <FormMessage className="text-sm text-red-600" />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className="w-full flex flex-row justify-end items-center gap-3">
-                                <Button variant="ghost" type="submit">Reset</Button>
-                                <Button variant="login" type="submit">Save</Button>
-                            </div>
-                        </form>
-                    </Form>
                 </div>
             </div>
-
         </div>
     )
 }
