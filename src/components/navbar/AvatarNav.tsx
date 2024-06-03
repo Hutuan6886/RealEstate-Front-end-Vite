@@ -7,11 +7,53 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { logoutFailure, logoutLoading, logoutSuccess } from "@/features/user/userSlice";
 import { FiLogOut } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 
 const AvatarNav = () => {
+    const dispatch = useDispatch()
+
+    const logout = async () => {
+        //todo: Để thực hiện logout function: Post api logout -> tại api thực hiện clearCookie access_token. Tại front-end thực hiện update currentUser thành user rỗng 
+        try {
+            dispatch(logoutLoading())
+            const res = await fetch('/api/auth/logout', {
+                method: 'post', cache: 'no-cache',
+                headers: {
+                    "Content-type": "application/json"
+                }
+            })
+            const { message } = await res.json()
+            if (res.ok) {
+                dispatch(logoutSuccess())
+                toast({
+                    className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+                    description: message
+                })
+            } else {
+                toast({
+                    variant: 'destructive',
+                    className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
+                    description: message
+                })
+                dispatch(logoutFailure())
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+            })
+            dispatch(logoutFailure())
+        }
+    }
     return (
 
         <DropdownMenu>
@@ -26,7 +68,7 @@ const AvatarNav = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem><Link to="/management">Management</Link></DropdownMenuItem>
                 <DropdownMenuItem><Link to="/profile">User Information</Link></DropdownMenuItem>
-                <DropdownMenuItem><Link className="flex flex-row justify-start items-center gap-2" to="">Log out <FiLogOut /></Link></DropdownMenuItem>
+                <DropdownMenuItem><Link className="flex flex-row justify-start items-center gap-2" to="" onClick={logout}>Log out <FiLogOut /></Link></DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

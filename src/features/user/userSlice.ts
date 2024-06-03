@@ -17,6 +17,7 @@ type UserReduxType = {
 export interface UserState {
   currentUser: UserReduxType;
   isLoading: boolean;
+  isOpenModal: boolean;
 }
 const initialState: UserState = {
   currentUser: {
@@ -34,6 +35,7 @@ const initialState: UserState = {
     updateAt: "",
   },
   isLoading: false,
+  isOpenModal: false,
 };
 
 export const userSlice = createSlice({
@@ -60,6 +62,60 @@ export const userSlice = createSlice({
     updateFailure: (state) => {
       state.isLoading = false;
     },
+    openDeleteModal: (state) => {
+      state.isOpenModal = true;
+    },
+    closeDeleteModal: (state) => {
+      state.isOpenModal = false;
+    },
+    deleteLoading: (state) => {
+      state.isLoading = true;
+    },
+    deleteSuccess: (state) => {
+      state.isLoading = false;
+      state.currentUser = {
+        id: "",
+        userName: "",
+        email: "",
+        imgUrl: "",
+        phone: "",
+        address: "",
+        birthday: "",
+        gender: "",
+        emailVerified: "",
+        provider: "",
+        createAt: "",
+        updateAt: "",
+      };
+      state.isOpenModal = false;
+    },
+    deleteFailure: (state) => {
+      state.isLoading = false;
+      state.isOpenModal = false;
+    },
+    logoutLoading: (state) => {
+      state.isLoading = true;
+    },
+    logoutSuccess: (state) => {
+      state.isLoading = false;
+      state.currentUser = {
+        id: "",
+        userName: "",
+        email: "",
+        imgUrl: "",
+        phone: "",
+        address: "",
+        birthday: "",
+        gender: "",
+        emailVerified: "",
+        provider: "",
+        createAt: "",
+        updateAt: "",
+      };
+    },
+    logoutFailure: (state) => {
+      state.isLoading = false;
+    },
   },
 });
 
@@ -70,6 +126,14 @@ export const {
   updateLoading,
   updateSuccess,
   updateFailure,
+  openDeleteModal,
+  closeDeleteModal,
+  deleteLoading,
+  deleteSuccess,
+  deleteFailure,
+  logoutLoading,
+  logoutSuccess,
+  logoutFailure,
 } = userSlice.actions;
 
 export default userSlice.reducer;

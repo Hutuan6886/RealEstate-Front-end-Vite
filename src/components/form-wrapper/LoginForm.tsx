@@ -63,9 +63,9 @@ const RegisterForm = () => {
                         description: message
                     })
                 }
+                dispatch(loginFailure())
             }
         } catch (error) {
-            console.log(error);
             toast({
                 variant: "destructive",
                 className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
@@ -73,9 +73,9 @@ const RegisterForm = () => {
                 description: "There was a problem with your request.",
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
+            dispatch(loginFailure())
         } finally {
             loginForm.reset()
-            dispatch(loginFailure())
         }
 
     }

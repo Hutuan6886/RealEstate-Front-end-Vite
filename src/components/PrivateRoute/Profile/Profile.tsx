@@ -9,6 +9,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "@/firebase";
 import { Button } from "@/components/ui/button";
 import {
+    useDispatch,
     useSelector,
     // useDispatch 
 
@@ -17,10 +18,14 @@ import { RootState } from "@/redux/store";
 import { Link } from "react-router-dom"
 import { RiProfileLine } from "react-icons/ri";
 import { BiSolidDashboard } from "react-icons/bi";
-import { toast } from "@/components/ui/use-toast";
+
 import { IoTrash } from "react-icons/io5";
 import CredentialsProfile from "../CredentialsProfile/CredentialsProfile";
 import OauthProfile from "../OauthProfile/OauthProfile";
+import ModalDeleteUser from "@/components/modal/ModalDeleteUser";
+import { closeDeleteModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteModal } from "@/features/user/userSlice";
+import { toast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 //todo: UPLOAD IMAGE
 //todo: Sử dụng useRef để lấy giá trị của <input type="file" onChange={(e)=>setImageUpload(e....)} ref={fileRef}> thông qua <img onClick={fileRef...}> ---> giá trị onchange của <input type="file"> được save tại imgUpload state là typeof File ---> truyền imgUpload và handleImageUpload(imgUpload:File) function để push img to firebase storage ---> Sau khi POST image request to firebase storage, firebase sẽ trả về response 1 imgUrl typeof string ---> sử dụng imgUrl để hiển thị ---> POST request to DB ---> lưu imgUrl vào user info ở redux
@@ -32,8 +37,8 @@ const Profile = () => {
     const [imgFirebaseUrl, setImgFirebaseUrl] = useState<string>()
     const fileRef = useRef<HTMLInputElement>(null)
     //todo: Redux
-    const { currentUser } = useSelector((state: RootState) => state.user)
-    // const dispatch = useDispatch()
+    const { currentUser, isLoading, isOpenModal } = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch()
 
 
     /* //! FIREBASE RULE (write file < 2MB)
@@ -77,18 +82,48 @@ const Profile = () => {
     }
 
     const deleteUser = async (userId: string) => {
-        const res = await fetch(`/api/user/delete/${userId}`, {
-            method: 'delete',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cache: 'no-cache'
-        })
-        console.log(res);
+        try {
+            dispatch(deleteLoading())
+            const res = await fetch(`/api/user/delete/${userId}`, {
+                method: 'delete',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                cache: 'no-cache'
+            })
+            const { message } = await res.json()
+            if (res.ok) {
+                dispatch(deleteSuccess())
+                toast({
+                    className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+                    description: message
+                })
+            } else {
+
+                toast({
+                    variant: 'destructive',
+                    className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
+                    description: message
+                })
+                dispatch(deleteFailure())
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+            })
+            dispatch(deleteFailure())
+        }
     }
 
     return (
         <div className="w-full h-full">
+            {/* //todo: Modal delete*/}
+            <ModalDeleteUser isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
+
             <div className="w-full h-full grid grid-cols-4">
                 <div className="col-span-1">
                     <div className="w-[80%] m-auto flex flex-col gap-11 items-start">
@@ -106,7 +141,7 @@ const Profile = () => {
                 <div className="col-span-3 flex flex-col items-start gap-11">
                     <div className="w-full flex flex-row justify-between items-center gap-4">
                         <h1 className="font-semibold text-3xl text-teal-700">User Information</h1>
-                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => deleteUser(currentUser.id)}><IoTrash /></Button>
+                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => { dispatch(openDeleteModal()) }}><IoTrash /></Button>
                     </div>
                     {/* //todo: Credentials form and Oauth form */}
                     {currentUser.provider === 'credentials' ? <CredentialsProfile imgFirebaseUrl={imgFirebaseUrl} /> : <OauthProfile imgFirebaseUrl={imgFirebaseUrl} />}
