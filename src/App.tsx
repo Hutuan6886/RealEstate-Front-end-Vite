@@ -7,9 +7,9 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
-import PrivateRoute from "@/components/PrivateRoute/PrivateRoute"
-import Profile from "@/components/PrivateRoute/Profile/Profile"
-import Management from "@/components/PrivateRoute/Management"
+import Profile from "@/components/private-route/profile/Profile"
+import Management from "@/components/private-route/management/Management"
+import PrivateRoute from "@/components/private-route/PrivateRoute";
 
 function App() {
   return (

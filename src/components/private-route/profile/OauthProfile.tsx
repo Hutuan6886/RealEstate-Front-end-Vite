@@ -89,7 +89,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
     return (
         <Form {...oauthProfileForm}>
             <form onSubmit={oauthProfileForm.handleSubmit(submitOauthProfileForm)} className="w-full">
-                <div className="w-full grid grid-cols-2 gap-4">
+                <div className="w-full md:grid grid-cols-2 gap-4">
                     <FormField
                         disabled={isLoading}
                         name="userName"

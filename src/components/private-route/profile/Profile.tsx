@@ -20,8 +20,8 @@ import { RiProfileLine } from "react-icons/ri";
 import { BiSolidDashboard } from "react-icons/bi";
 
 import { IoTrash } from "react-icons/io5";
-import CredentialsProfile from "../CredentialsProfile/CredentialsProfile";
-import OauthProfile from "../OauthProfile/OauthProfile";
+import CredentialsProfile from "./CredentialsProfile";
+import OauthProfile from "./OauthProfile";
 import ModalDeleteUser from "@/components/modal/ModalDeleteUser";
 import { closeDeleteModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteModal } from "@/features/user/userSlice";
 import { toast } from "@/components/ui/use-toast";
@@ -99,7 +99,6 @@ const Profile = () => {
                     description: message
                 })
             } else {
-
                 toast({
                     variant: 'destructive',
                     className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
@@ -124,9 +123,9 @@ const Profile = () => {
             {/* //todo: Modal delete*/}
             <ModalDeleteUser isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
 
-            <div className="w-full h-full grid grid-cols-4">
-                <div className="col-span-1">
-                    <div className="w-[80%] m-auto flex flex-col gap-11 items-start">
+            <div className="w-full h-full md:grid grid-cols-4">
+                <div className="col-span-1 mb-3">
+                    <div className="w-full md:w-[80%] m-auto flex flex-col gap-3 md:gap-11 items-start">
                         <input onChange={(e) => {
                             if (e.target.files === null) return
                             setImageUpload(e.target.files[0])

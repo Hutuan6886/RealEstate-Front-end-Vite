@@ -88,11 +88,11 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
             dispatch(updateFailure())
         }
     }
-    
+
     return (
         <Form {...profileForm}>
             <form onSubmit={profileForm.handleSubmit(submitProfileForm)} className="w-full flex flex-col items-start gap-4">
-                <div className="w-full grid grid-cols-2 gap-4">
+                <div className="w-full md:grid grid-cols-2 gap-4">
                     <div className="col-span-1 flex flex-col gap-3">
                         <FormField
                             disabled={isLoading}

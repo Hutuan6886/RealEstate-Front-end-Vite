@@ -49,10 +49,14 @@ const Navbar = () => {
           <Button variant='ghost' className="absolute top-1 left-1 bg-transparent hover:bg-transparent text-xl text-white" onClick={() => { setIsSidebar(!isSideBar) }}><IoClose /></Button>
           <div className="translate-y-16 flex flex-col items-start gap-4">
             <MainNav className="flex flex-col items-start text-white" />
-            <div className="w-full flex flex-col items-center  gap-3">
+            {!currentUser ? <div className="w-full flex flex-col items-center  gap-3">
               <Link className="w-full " to='/register'><Button variant='ghost' className="w-full font-semibold text-lg text-teal-700 bg-white"> Register</Button></Link>
               <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-semibold text-lg text-white bg-black hover:bg-black"> Log In</Button></Link>
-            </div>
+            </div> : <div className="w-full flex flex-col items-center gap-2">
+              <div className="w-full flex flex-row items-center justify-start gap-2 bg-white shadow-md rounded-[1rem] p-4"><AvatarNav /> {currentUser.userName}</div>
+              
+            </div>}
+
           </div>
         </div>
       </div>}

@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 
-
 const AvatarNav = () => {
     const dispatch = useDispatch()
 
@@ -57,7 +56,7 @@ const AvatarNav = () => {
     return (
 
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild >
                 <Avatar className="cursor-pointer">
                     <AvatarImage src="https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png" />
                     <AvatarFallback>CN</AvatarFallback>
