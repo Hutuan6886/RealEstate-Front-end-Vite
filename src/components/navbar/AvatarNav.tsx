@@ -53,6 +53,7 @@ const AvatarNav = () => {
             dispatch(logoutFailure())
         }
     }
+    
     return (
 
         <DropdownMenu>

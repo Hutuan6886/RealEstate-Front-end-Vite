@@ -1,29 +1,26 @@
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChangeEvent } from "react";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 type Data = {
-    name: string;
+    value: string;
     label: string
 }
 
-export interface SelectFormProps {
+type SelectFormProps<T extends FieldValues> = {
     data: Data[]
-    name: string;
-    label: string
+    label: string;
+    onChange?: (e: ChangeEvent<HTMLSelectElement>) => void
+    name: Path<T>;
+    register: UseFormRegister<T>
 }
 
-const SelectForm = ({ name, label, data }: SelectFormProps) => {
+const SelectForm = <T extends FieldValues>({ name, label, data, onChange, register }: SelectFormProps<T>) => {
     return (
-        <Select name={name}>
-            <SelectTrigger className="w-[180px] rounded-[0.375rem]">
-                <SelectValue placeholder={`Select ${label}`} />
-            </SelectTrigger>
-            <SelectContent className="bg-white rounded-[0.375rem]">
-                <SelectGroup>
-                    {data.map((value: Data, i) => (
-                        <SelectItem key={i} value={value.name} className="cursor-pointer" >{value.label}</SelectItem>
-                    ))}
-                </SelectGroup>
-            </SelectContent>
-        </Select>
+        <select {...register(name)} defaultValue="DEFAULT" className="bg-white border border-black rounded-[0.375rem] p-2 cursor-pointer" onChange={onChange}>
+            <option value="DEFAULT" disabled>-- Choose {label} --</option>
+            {data.map((item: Data, i) => (
+                <option key={i} value={item.value} className="text-sm">{item.label}</option>
+            ))}
+        </select>
     )
 }
 

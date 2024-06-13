@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ children, isOpen, title, description }) =
     }
     return (
         <Dialog open={isOpen} onOpenChange={onChange}>
-            <DialogContent className="bg-white rounded-[0.375rem]">
+            <DialogContent className="w-[80%] md:w-full bg-white rounded-[0.375rem]">
                 <DialogHeader>
                     <DialogTitle className="text-teal-700">{title}</DialogTitle>
                     <DialogDescription className="text-zinc-400">{description}</DialogDescription>

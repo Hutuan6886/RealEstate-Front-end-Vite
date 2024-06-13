@@ -9,3 +9,12 @@
         margin: 0;
     }
 }
+
+@layer components {
+    .ringable-item {
+        @apply shadow-sm text-xs text-gray-900 hover:ring-2 hover:ring-indigo-200 hover:bg-gray-50;
+    }
+    .ringed-item {
+        @apply ring-2 ring-indigo-500 bg-indigo-100;
+    }
+}

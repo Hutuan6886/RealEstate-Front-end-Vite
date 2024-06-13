@@ -1,11 +1,19 @@
 import { cn } from '@/lib/utils'
-import React from 'react'
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form'
 
-const Checkbox = (props: React.HTMLProps<HTMLInputElement>) => {
-    const { id, name, label, className, ...inputProps } = props
+type CheckboxProps<T extends FieldValues> = {
+
+    label?: string;
+    className?: string;
+    onChange?: () => void
+    name: Path<T>
+    register: UseFormRegister<T>
+}
+
+const Checkbox = <T extends FieldValues>({ label, className, name, register, onChange }: CheckboxProps<T>) => {
     return (
         <div className='flex flex-row justify-start items-center gap-2'>
-            <input type='checkbox' name={name} id={id} {...inputProps} className={cn('border-black checked:bg-teal-700 checked:text-white rounded-[0.375rem] cursor-pointer', className)} />
+            <input {...register(name)} type='checkbox' className={cn('border-black checked:bg-teal-700 checked:text-white rounded-[0.375rem] cursor-pointer', className)} onChange={onChange} />
             <label htmlFor={name} className="text-sm">{label}</label>
         </div>
     )

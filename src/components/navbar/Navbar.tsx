@@ -6,10 +6,10 @@ import MainNav from "./MainNav";
 import AvatarNav from "./AvatarNav"
 import { Button } from "@/components/ui/button";
 import {
-  IoClose,
   IoMenu
 } from "react-icons/io5";
 import { RootState } from "@/redux/store";
+import SideBar from "./SideBar";
 
 const Navbar = () => {
   const [isSideBar, setIsSidebar] = useState(false)
@@ -44,22 +44,7 @@ const Navbar = () => {
         ><IoMenu /></Button>
       </div>
       {/* //todo"sidebar */}
-      {<div className={`fixed w-[60%] md:w-[40%] border-0 h-full bg-teal-700 rounded-l-[0.075rem] z-20 transition ${!isSideBar ? "top-0 -right-[60%] md:-right-[40%]" : "top-0 right-0"}`}>
-        <div className="relative w-full h-full p-3">
-          <Button variant='ghost' className="absolute top-1 left-1 bg-transparent hover:bg-transparent text-xl text-white" onClick={() => { setIsSidebar(!isSideBar) }}><IoClose /></Button>
-          <div className="translate-y-16 flex flex-col items-start gap-4">
-            <MainNav className="flex flex-col items-start text-white" />
-            {!currentUser ? <div className="w-full flex flex-col items-center  gap-3">
-              <Link className="w-full " to='/register'><Button variant='ghost' className="w-full font-semibold text-lg text-teal-700 bg-white"> Register</Button></Link>
-              <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-semibold text-lg text-white bg-black hover:bg-black"> Log In</Button></Link>
-            </div> : <div className="w-full flex flex-col items-center gap-2">
-              <div className="w-full flex flex-row items-center justify-start gap-2 bg-white shadow-md rounded-[1rem] p-4"><AvatarNav /> {currentUser.userName}</div>
-              
-            </div>}
-
-          </div>
-        </div>
-      </div>}
+      <SideBar visible={isSideBar} closeSideBar={() => { setIsSidebar(false) }} currentUser={currentUser} />
     </nav>
   );
 };

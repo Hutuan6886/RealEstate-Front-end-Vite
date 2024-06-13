@@ -76,7 +76,7 @@ const Profile = () => {
                 console.log("Upload Error", error.message);
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((imgUrl) => { setImgFirebaseUrl(imgUrl) }) //* imgUrl from firebase response back
+                getDownloadURL(uploadTask.snapshot.ref).then((imgUrl: string) => { setImgFirebaseUrl(imgUrl) }) //* imgUrl from firebase response back
             }
         )
     }
