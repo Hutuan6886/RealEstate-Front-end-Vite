@@ -2,11 +2,13 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import UserReducer from "@/features/user/userSlice"; //* export toàn bộ @/features/user/userSlice đặt tên là UserReducer
 import storage from "redux-persist/lib/storage"; //* defaults to localStorage for web
 import { persistReducer, persistStore } from "redux-persist";
+import ListingReducer from "@/features/listing/listingSlice";
 
 //todo: Tạo redux-persist để lưu data vào localStorage
 const rootReducer = combineReducers({
   //todo: Khai báo toàn bộ reducer của app
   user: UserReducer,
+  listing: ListingReducer,
 });
 const persistConfig = {
   //todo: Key name, version and storage of localStorage

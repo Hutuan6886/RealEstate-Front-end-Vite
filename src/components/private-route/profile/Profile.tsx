@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import {
     useDispatch,
     useSelector,
-    // useDispatch 
 
 } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -22,7 +21,7 @@ import { BiSolidDashboard } from "react-icons/bi";
 import { IoTrash } from "react-icons/io5";
 import CredentialsProfile from "./CredentialsProfile";
 import OauthProfile from "./OauthProfile";
-import ModalDeleteUser from "@/components/modal/ModalDeleteUser";
+import ModalDelete from "@/components/modal/ModalDelete"
 import { closeDeleteModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteModal } from "@/features/user/userSlice";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -63,7 +62,7 @@ const Profile = () => {
                 console.log(progress);
                 toast({
                     title: "Update Avatar",
-                    className: `${progress < 100 ? "text-zinc-600" : "text-green-600"}`,
+                    className: `${progress < 100 ? "text-zinc-600" : "text-green-600"} bg-white rounded-[0.375rem]`,
                     description: `${progress < 100 ? `Loading...${progress}%` : "Success."}`
                 })
             },
@@ -121,7 +120,7 @@ const Profile = () => {
     return (
         <div className="w-full h-full">
             {/* //todo: Modal delete*/}
-            <ModalDeleteUser isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
+            <ModalDelete title="Delete User" description="For sure you want to delete it?" isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
 
             <div className="w-full h-full md:grid grid-cols-4">
                 <div className="col-span-1 mb-3">

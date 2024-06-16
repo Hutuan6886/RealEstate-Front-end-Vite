@@ -5,15 +5,16 @@ type CheckboxProps<T extends FieldValues> = {
 
     label?: string;
     className?: string;
+    disabled?: boolean
     onChange?: () => void
     name: Path<T>
     register: UseFormRegister<T>
 }
 
-const Checkbox = <T extends FieldValues>({ label, className, name, register, onChange }: CheckboxProps<T>) => {
+const Checkbox = <T extends FieldValues>({ label, className, name, disabled, register, onChange }: CheckboxProps<T>) => {
     return (
         <div className='flex flex-row justify-start items-center gap-2'>
-            <input {...register(name)} type='checkbox' className={cn('border-black checked:bg-teal-700 checked:text-white rounded-[0.375rem] cursor-pointer', className)} onChange={onChange} />
+            <input {...register(name)} disabled={disabled} type='checkbox' className={cn('border-black checked:bg-teal-700 checked:text-white rounded-[0.375rem] cursor-pointer', className)} onChange={onChange} />
             <label htmlFor={name} className="text-sm">{label}</label>
         </div>
     )
