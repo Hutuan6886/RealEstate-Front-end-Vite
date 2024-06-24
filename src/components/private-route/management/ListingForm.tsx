@@ -211,7 +211,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
                         <Button disabled={isLoading || isLoadingUpload} type="button" className="bg-sky-700 flex flex-row items-center justify-center gap-1 px-2" onClick={submitUploadImg}><MdCloudUpload className="text-xl" />{!isLoadingUpload ? "Upload Image" : 'Uploading...'}</Button>
                     </div>
                     <div className="w-full">
-                        <ImageList imageList={imgUrls} />
+                        <ImageList imageList={imgUrls} deleteImgStorage={() => { }} />
                     </div>
                     <div className="w-full md:grid grid-cols-2 gap-4">
                         <div className="w-full col-span-1 flex flex-col gap-3 mb-4 md:m-0">

@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Profile from "@/components/private-route/profile/Profile"
 import Management from "@/components/private-route/management/Management"
 import PrivateRoute from "@/components/private-route/PrivateRoute";
+import ManagementListingId from "./components/private-route/management/ManagementListingId";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />}></Route>
             <Route path="/management" element={<Management />}></Route>
+            <Route path="/management/:listingId" element={<ManagementListingId />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

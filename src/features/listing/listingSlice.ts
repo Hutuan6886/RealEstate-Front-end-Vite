@@ -53,9 +53,11 @@ export const listingSlice = createSlice({
       state.currentListingList = action.payload;
     },
     listingDelete: (state, action: PayloadAction<ListingReduxType>) => {
-      state.currentListingList = state.currentListingList.filter(
-        (listing) => listing.id !== action.payload.id
-      );
+      state.currentListingList = [
+        ...state.currentListingList.filter(
+          (listing) => listing.id !== action.payload.id
+        ),
+      ];
     },
   },
 });
