@@ -10,7 +10,9 @@ import { Toaster } from "@/components/ui/toaster";
 import Profile from "@/components/private-route/profile/Profile"
 import Management from "@/components/private-route/management/Management"
 import PrivateRoute from "@/components/private-route/PrivateRoute";
-import ManagementListingId from "./components/private-route/management/ManagementListingId";
+import ManagementListingId from "@/components/private-route/management/ManagementListingId";
+import ListingContent from "@/components/listing-content/ListingContent";
+// import Footer from "@/components/footer/Footer";
 
 function App() {
   return (
@@ -26,12 +28,14 @@ function App() {
           <Route path="/setting" element={<Setting />} />
           <Route path="/log-in" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/listing/:listingId" element={<ListingContent />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />}></Route>
             <Route path="/management" element={<Management />}></Route>
             <Route path="/management/:listingId" element={<ManagementListingId />}></Route>
           </Route>
         </Routes>
+        {/* <Footer /> */}
       </BrowserRouter>
     </div>
   );

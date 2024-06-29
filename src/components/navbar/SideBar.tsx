@@ -14,7 +14,7 @@ interface SideBarProps {
 const SideBar: React.FC<SideBarProps> = ({ visible, closeSideBar, currentUser }) => {
     return (
         <div className={`${visible && "fixed"} w-full h-full z-20`}>
-            <div className={`fixed z-20 w-[60%] md:w-[40%] border-0 h-full bg-teal-700 rounded-l-[0.075rem] transition-all ${!visible ? "top-0 -right-[60%] md:-right-[40%]" : "top-0 right-0"}`}>
+            <div className={`fixed z-20 w-[60%] md:w-[40%] border-0 h-full bg-zinc-800 rounded-l-[0.075rem] transition-all ${!visible ? "top-0 -right-[60%] md:-right-[40%]" : "top-0 right-0"}`}>
                 <div className="relative w-full h-full p-3">
                     <Button variant='ghost' className="absolute top-1 left-1 bg-transparent hover:bg-transparent text-xl text-white" onClick={closeSideBar}><IoClose /></Button>
                     <div className="translate-y-16 flex flex-col items-start gap-4">

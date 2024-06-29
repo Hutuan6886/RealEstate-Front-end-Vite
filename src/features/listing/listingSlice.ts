@@ -20,6 +20,7 @@ export type ListingReduxType = {
 
 export interface ListingState {
   currentListingList: ListingReduxType[];
+  isOpenDeleteModal: boolean;
 }
 
 const initialState: ListingState = {
@@ -43,6 +44,7 @@ const initialState: ListingState = {
       discountPrice: undefined,
     },
   ],
+  isOpenDeleteModal: false,
 };
 
 export const listingSlice = createSlice({
@@ -59,9 +61,20 @@ export const listingSlice = createSlice({
         ),
       ];
     },
+    openDeleteListingModal: (state) => {
+      state.isOpenDeleteModal = true;
+    },
+    closeDeleteListingModal: (state) => {
+      state.isOpenDeleteModal = false;
+    },
   },
 });
 
-export const { listingCreate, listingDelete } = listingSlice.actions;
+export const {
+  listingCreate,
+  listingDelete,
+  openDeleteListingModal,
+  closeDeleteListingModal,
+} = listingSlice.actions;
 
 export default listingSlice.reducer;

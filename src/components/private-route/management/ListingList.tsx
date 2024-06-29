@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { listingCreate, listingDelete } from "@/features/listing/listingSlice";
+import { closeDeleteListingModal, listingCreate, listingDelete, openDeleteListingModal } from "@/features/listing/listingSlice";
 import { RootState } from "@/redux/store";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { app } from "@/firebase";
@@ -19,9 +19,10 @@ interface ListingItemProps {
 const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
   //todo: STATE
   const dataListingList = useSelector((state: RootState) => state.listing.currentListingList)
-  const dispatch = useDispatch()
+  const isOpenDeleteModal = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
-  const [openModalDelete, setOpenModalDelete] = useState<boolean>(false)
+  const dispatch = useDispatch()
+  const [listingClicked, setListingClicked] = useState<ManagementFormType>()
 
   useEffect(() => {
     async function getListingList() {
@@ -58,7 +59,7 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
     getListingList()
   }, [currentUser, dispatch])
 
-  const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[]): Promise<void> => {
+  const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[] | undefined): Promise<void> => {
     try {
       const res = await fetch(`/api/listing/delete-listing-item/${listingId}`, {
         method: 'Delete',
@@ -70,6 +71,10 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
       if (res.ok) {
         const listingDeleted = await res.json()
         dispatch(listingDelete(listingDeleted))
+
+        if (!listingImgUrl) {
+          return
+        }
         for (const imgUrl of listingImgUrl) {
           //todo: Delete listing item phải delete những img của nó ở storage
           await deleteImgOfListing(imgUrl)
@@ -89,7 +94,7 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
       console.log("LISTING_LIST", error);
     }
     finally {
-      setOpenModalDelete(false)
+      dispatch(closeDeleteListingModal())
     }
   }
 
@@ -107,15 +112,18 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
   }
 
   return (
-    <div className="w-[90%] m-auto h-full">
+    <div className="w-full h-full">
       <h3 className="text-3xl text-teal-700 text-center font-semibold mb-5">Listing</h3>
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {dataListingList?.map((dataListing: ManagementFormType) => (
           <div key={dataListing.id}>
-            <ListingItem maxChar={50} dataListing={dataListing} onDelete={() => { setOpenModalDelete(true) }} updateListingUrl={`/management/${dataListing.id}`} />
-            <ModalDelete title={`Delete ${dataListing.name} Listing Item`} description="For sure you want to delete it?" isOpen={openModalDelete} onClose={() => { setOpenModalDelete(false) }} onConfirm={() => { deleteListingItem(dataListing.id, dataListing.imgUrl) }} />
+            <ListingItem maxChar={50} dataListing={dataListing} onDelete={() => {
+              dispatch(openDeleteListingModal())
+              setListingClicked(dataListing)
+            }} updateListingUrl={`/management/${dataListing.id}`} />
           </div>
         ))}
+        <ModalDelete title={`Delete ${listingClicked?.name} Listing Item`} description="For sure you want to delete it?" isOpen={isOpenDeleteModal} onClose={() => { dispatch(closeDeleteListingModal()) }} onConfirm={() => { deleteListingItem(listingClicked?.id, listingClicked?.imgUrl) }} />
       </div>
     </div>
   )

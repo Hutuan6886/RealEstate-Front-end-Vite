@@ -62,10 +62,10 @@ export const userSlice = createSlice({
     updateFailure: (state) => {
       state.isLoading = false;
     },
-    openDeleteModal: (state) => {
+    openDeleteUserModal: (state) => {
       state.isOpenModal = true;
     },
-    closeDeleteModal: (state) => {
+    closeDeleteUserModal: (state) => {
       state.isOpenModal = false;
     },
     deleteLoading: (state) => {
@@ -126,8 +126,8 @@ export const {
   updateLoading,
   updateSuccess,
   updateFailure,
-  openDeleteModal,
-  closeDeleteModal,
+  openDeleteUserModal,
+  closeDeleteUserModal,
   deleteLoading,
   deleteSuccess,
   deleteFailure,

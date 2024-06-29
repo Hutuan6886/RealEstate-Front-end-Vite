@@ -18,3 +18,20 @@
         @apply ring-2 ring-indigo-500 bg-indigo-100;
     }
 }
+
+/* //todo: custom scrollbar */
+::-webkit-scrollbar {
+    /* Customize the scrollbar width */
+    width: 16px;
+}
+
+::-webkit-scrollbar-track {
+    /* Customize the scrollbar track */
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    /* Customize the scrollbar thumb */
+    background: #555;
+}

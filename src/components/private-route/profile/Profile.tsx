@@ -22,7 +22,7 @@ import { IoTrash } from "react-icons/io5";
 import CredentialsProfile from "./CredentialsProfile";
 import OauthProfile from "./OauthProfile";
 import ModalDelete from "@/components/modal/ModalDelete"
-import { closeDeleteModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteModal } from "@/features/user/userSlice";
+import { closeDeleteUserModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteUserModal } from "@/features/user/userSlice";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 
@@ -120,7 +120,7 @@ const Profile = () => {
     return (
         <div className="w-full h-full">
             {/* //todo: Modal delete*/}
-            <ModalDelete title="Delete User" description="For sure you want to delete it?" isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
+            <ModalDelete title="Delete User" description="For sure you want to delete it?" isLoading={isLoading} isOpen={isOpenModal} onClose={() => dispatch(closeDeleteUserModal())} onConfirm={() => { deleteUser(currentUser.id) }} />
 
             <div className="w-full h-full md:grid grid-cols-4">
                 <div className="col-span-1 mb-3">
@@ -139,7 +139,7 @@ const Profile = () => {
                 <div className="col-span-3 flex flex-col items-start gap-11">
                     <div className="w-full flex flex-row justify-between items-center gap-4">
                         <h1 className="font-semibold text-3xl text-teal-700">User Information</h1>
-                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => { dispatch(openDeleteModal()) }}><IoTrash /></Button>
+                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => { dispatch(openDeleteUserModal()) }}><IoTrash /></Button>
                     </div>
                     {/* //todo: Credentials form and Oauth form */}
                     {currentUser.provider === 'credentials' ? <CredentialsProfile imgFirebaseUrl={imgFirebaseUrl} /> : <OauthProfile imgFirebaseUrl={imgFirebaseUrl} />}
