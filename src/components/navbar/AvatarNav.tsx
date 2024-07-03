@@ -4,7 +4,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
+    // DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logoutFailure, logoutLoading, logoutSuccess } from "@/features/user/userSlice";
@@ -53,7 +53,7 @@ const AvatarNav = () => {
             dispatch(logoutFailure())
         }
     }
-    
+
     return (
 
         <DropdownMenu>
@@ -63,12 +63,12 @@ const AvatarNav = () => {
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-50 bg-white">
+            <DropdownMenuContent className="w-50 bg-white rounded-[0.375rem]">
                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><Link to="/management">Management</Link></DropdownMenuItem>
-                <DropdownMenuItem><Link to="/profile">User Information</Link></DropdownMenuItem>
-                <DropdownMenuItem><Link className="flex flex-row justify-start items-center gap-2" to="" onClick={logout}>Log out <FiLogOut /></Link></DropdownMenuItem>
+                <hr />
+                <DropdownMenuItem className="p-0"><Link to="/management" className="w-full rounded-[0.375rem] hover:bg-teal-700 hover:text-white transition p-2 ">Management</Link></DropdownMenuItem>
+                <DropdownMenuItem className="p-0"><Link to="/profile" className="w-full rounded-[0.375rem] hover:bg-teal-700 hover:text-white transition p-2">User Information</Link></DropdownMenuItem>
+                <DropdownMenuItem><Link className="flex flex-row justify-start items-center gap-2 font-semibold" to="" onClick={logout}>Log out <FiLogOut /></Link></DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

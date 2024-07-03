@@ -14,12 +14,17 @@ interface ImageListingModalProps {
 }
 
 const ImageListingModal: React.FC<ImageListingModalProps> = ({ dataListing, onClose }) => {
-    const [openImageModal, setOpenImageModal] = useState<boolean>()
+    const [openImageModal, setOpenImageModal] = useState<boolean>(false)
+    const [openRequestInfo, setOpenRequestInfo] = useState<boolean>(false)
     const [imgIndex, setImgIndex] = useState<number>()
 
     return (
         <>
-            {openImageModal && dataListing && imgIndex && <ImageModal imgList={dataListing?.imgUrl} index={imgIndex} onClose={() => setOpenImageModal(false)} />}
+            {openImageModal && dataListing && imgIndex && <div style={{ animation: 'zoomOut .3s linear' }} className="fixed z-30 w-full top-0 left-0">
+                <ImageModal imgList={dataListing?.imgUrl} index={imgIndex} onClose={() => setOpenImageModal(false)} />
+            </div>
+                // <ImageModal imgList={dataListing?.imgUrl} index={imgIndex} onClose={() => setOpenImageModal(false)}/>
+            }
             <div className="fixed z-20 top-0 left-0
                             hidden md:block md:w-full md:h-full 
                             bg-black opacity-80" onClick={onClose}></div>
@@ -38,9 +43,9 @@ const ImageListingModal: React.FC<ImageListingModalProps> = ({ dataListing, onCl
                     </div>
                 </div>
                 <hr />
-                <p className="text-sm font-semibold">{dataListing?.address} | {formatter.format(dataListing?.regularPrice as number)} | {dataListing?.bedrooms} Beds {dataListing?.bathrooms} Baths</p>
+                <p className="hidden md:block text-sm font-semibold">{dataListing?.address} | {formatter.format(dataListing?.regularPrice as number)} | {dataListing?.bedrooms} Beds {dataListing?.bathrooms} Baths</p>
                 <div className="grid grid-cols-4 gap-1 overflow-hidden">
-                    <div className="col-span-4 md:col-span-3 overflow-y-scroll">
+                    <div className="col-span-4 lg:col-span-3 overflow-y-scroll">
                         <h3 className="text-xl font-semibold py-4">Listing Photos <span className="text-zinc-600 font-normal">({dataListing?.imgUrl.length})</span></h3>
                         <div className="grid grid-cols-3 gap-2">
                             {
@@ -49,12 +54,29 @@ const ImageListingModal: React.FC<ImageListingModalProps> = ({ dataListing, onCl
                                         setOpenImageModal(true);
                                         setImgIndex(i + 1)
                                     }} />
-
                                 ))}
                         </div>
                     </div>
-                    <div className="overflow-y-scroll">
+                    <div className="hidden lg:block overflow-y-scroll">
                         <RequestInfoForm />
+                    </div>
+                    <Button className="block lg:hidden col-span-4 border border-orange-700 bg-orange-700 hover:bg-white hover:text-orange-700 transition" onClick={() => { setOpenRequestInfo(true) }}>Request Info</Button>
+                    <div>
+                        {openRequestInfo &&
+                            <>
+                                <div className="fixed z-30 top-0 left-0
+                            hidden md:block md:w-full md:h-full 
+                            bg-black opacity-80" onClick={() => setOpenRequestInfo(false)}></div>
+                                <div className="fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                            w-full h-full md:w-[90%] md:h-fit
+                            bg-white 
+                            rounded-[0.65rem] 
+                            p-1
+                            flex flex-col gap-1">
+                                    <RequestInfoForm label="Learn more about this property" onClose={() => setOpenRequestInfo(false)} />
+                                </div>
+                            </>
+                        }
                     </div>
                 </div>
             </div>

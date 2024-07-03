@@ -18,6 +18,8 @@ interface ListingItemProps {
 
 const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
   //todo: STATE
+  const [isLoading, setIsloading] = useState<boolean>(false)
+
   const dataListingList = useSelector((state: RootState) => state.listing.currentListingList)
   const isOpenDeleteModal = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
@@ -25,7 +27,9 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
   const [listingClicked, setListingClicked] = useState<ManagementFormType>()
 
   useEffect(() => {
+
     async function getListingList() {
+      setIsloading(true)
       try {
         const res = await fetch(`/api/listing/get-listing-list/${currentUser.id}`, {
           method: 'GET',
@@ -54,6 +58,8 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
           className: "bg-red-600 text-white rounded-[0.375rem]",
           description: "Something went wrong!"
         })
+      } finally {
+        setIsloading(false)
       }
     }
     getListingList()
@@ -109,6 +115,10 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
       // Uh-oh, an error occurred!
       console.log(error);
     })
+  }
+
+  if (isLoading) {
+    return null
   }
 
   return (

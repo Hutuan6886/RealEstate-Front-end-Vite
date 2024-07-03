@@ -15,6 +15,7 @@ import ListingContent from "@/components/listing-content/ListingContent";
 // import Footer from "@/components/footer/Footer";
 
 function App() {
+
   return (
     <div className="w-full h-full px-4">
       <BrowserRouter>

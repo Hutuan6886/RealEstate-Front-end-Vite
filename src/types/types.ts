@@ -32,3 +32,15 @@ export type ListingType = {
   createAt: Date;
   updateAt: Date;
 };
+
+export type LandlordType = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export type RequestInfoFormType = {
+  phone: string;
+  email: string;
+  message: string;
+};

@@ -35,3 +35,27 @@
     /* Customize the scrollbar thumb */
     background: #555;
 }
+
+/* //todo: write keyframes for animation modal */
+/* @keyframes zoomOut {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    25% {
+        transform: scale(0.25);
+        opacity: 0.25;
+    }
+    50% {
+        transform: scale(0.5);
+        opacity: 0.5;
+    }
+    75% {
+        transform: scale(0.75);
+        opacity: 0.75;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+} */

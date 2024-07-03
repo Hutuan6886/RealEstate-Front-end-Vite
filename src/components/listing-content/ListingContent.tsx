@@ -18,11 +18,13 @@ import RequestInfoForm from "./RequestInfoForm"
 const ListingContent = () => {
     const [dataListing, setDataListing] = useState<ListingType>()
     const { listingId } = useParams()
-    
+
     const [openImgListingModal, setOpenImgListingModal] = useState<boolean>(false)
+    const [isLoading, setIsloading] = useState<boolean>(false)
 
     useEffect(() => {
         const getDataListing = async (): Promise<void> => {
+            setIsloading(true)
             try {
                 const res = await fetch(`/api/listing/get-listing-content/${listingId}`, {
                     method: 'GET',
@@ -34,17 +36,25 @@ const ListingContent = () => {
                 if (res.ok) {
                     const dataListing = await res.json()
                     setDataListing(dataListing)
-                    console.log("dataListing", dataListing);
                 }
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsloading(false)
             }
         }
         getDataListing()
     }, [listingId])
+
+    if (isLoading) {
+        return null
+    }
+
     return (
         <div className="w-full md:w-[75%] m-auto flex flex-col gap-5">
-            {openImgListingModal && <ImageListingModal dataListing={dataListing} onClose={() => setOpenImgListingModal(false)} />}
+            {openImgListingModal && <div style={{ animation: 'zoomOut .3s linear' }} className="fixed z-20 w-full top-0 left-0">
+                <ImageListingModal dataListing={dataListing} onClose={() => setOpenImgListingModal(false)} />
+            </div>}
             <div className="w-full h-[350px] rounded-[0.65rem] overflow-hidden" onClick={() => setOpenImgListingModal(true)}>
                 <div className="relative">
                     <div className="absolute top-2 right-2 z-10
@@ -74,40 +84,40 @@ const ListingContent = () => {
                     <div className="grid grid-cols-3 gap-3">
                         <div className="col-span-3 md:col-span-2 flex flex-col gap-2">
                             <h3 className="font-semibold text-2xl">{dataListing?.name}</h3>
-                            <div className="text-zinc-700">
+                            <div className="text-zinc-600">
                                 <p className="flex flex-row items-center justify-start gap-2"><FaLocationDot />{dataListing?.address}</p>
-                                <span className="text-zinc-800">30308</span></div>
+                                <span className="text-zinc-600">30308</span></div>
                             <div className="md:hidden flex flex-row gap-6">
                                 <div className="flex flex-col">
                                     <h3 className="font-semibold text-2xl">{formatter.format(dataListing?.regularPrice as number)}</h3>
-                                    <p className="text-zinc-700">discount</p>
+                                    <p className="text-zinc-600">discount</p>
                                 </div>
                                 <div className="flex flex-col md:flex-row items-center justify-start gap-3">
-                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-700"><IoBed />{dataListing?.bedrooms} Beds</div>
-                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-700"><BiSolidBath />{dataListing?.bathrooms} Baths</div>
-                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-700"><RiBuilding3Fill />{dataListing?.squaremetre} <TbMeterSquare className="text-xl" /></div>
+                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-600"><IoBed />{dataListing?.bedrooms} Beds</div>
+                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-600"><BiSolidBath />{dataListing?.bathrooms} Baths</div>
+                                    <div className="flex flex-row flex-nowrap items-center justify-start gap-1 text-zinc-600"><RiBuilding3Fill />{dataListing?.squaremetre} <TbMeterSquare className="text-xl" /></div>
                                 </div>
                             </div>
                             <div className="hidden md:flex flex-row items-center justify-start gap-3">
-                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-800"><IoBed />{dataListing?.bedrooms} Beds</div>
-                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-800"><BiSolidBath />{dataListing?.bathrooms} Baths</div>
-                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-800"><RiBuilding3Fill />{dataListing?.squaremetre} <TbMeterSquare className="text-xl" /></div>
+                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-600"><IoBed />{dataListing?.bedrooms} Beds</div>
+                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-600"><BiSolidBath />{dataListing?.bathrooms} Baths</div>
+                                <div className="flex flex-row items-center justify-start gap-1 text-zinc-600"><RiBuilding3Fill />{dataListing?.squaremetre} <TbMeterSquare className="text-xl" /></div>
                             </div>
                         </div>
                         <div className="hidden md:block md:col-span-1 ">
                             <div className="flex flex-col">
                                 <h3 className="font-semibold text-2xl">{formatter.format(dataListing?.regularPrice as number)}</h3>
-                                <p className="text-zinc-800">discount</p>
+                                <p className="text-zinc-600">discount</p>
                             </div>
                         </div>
                     </div>
                     <div className="w-full">
                         <h3 className="font-semibold text-xl">Description</h3>
-                        <p>{dataListing?.description}</p>
+                        <p className="text-zinc-600">{dataListing?.description}</p>
                     </div>
                 </div>
                 <div className="hidden lg:block col-span-1">
-                    <RequestInfoForm />
+                    <RequestInfoForm address={dataListing?.address} />
                 </div>
             </div>
             <HomeHighlights parking={dataListing?.parking} price={dataListing?.regularPrice} sqft={dataListing?.squaremetre} createAt={dataListing?.createAt} />
