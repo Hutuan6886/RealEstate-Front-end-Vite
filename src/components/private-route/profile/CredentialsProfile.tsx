@@ -182,7 +182,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                 <FormItem className="col-span-1">
                                     <FormLabel className="font-semibold">Current Address</FormLabel>
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                        <Input type="text" placeholder="1 Street - Ward - District - City" {...field} />
+                                        <Input type="text" placeholder="1 Street, Ward, District, City" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

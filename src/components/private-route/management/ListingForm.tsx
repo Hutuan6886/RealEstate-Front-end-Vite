@@ -174,6 +174,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     }
 
     useEffect(() => {
+        //todo: Update img array
         setValue("imgUrl", imgUrls)
     }, [setValue, imgUrls])
 
@@ -199,7 +200,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     return (
         <div className="w-full">
             <div className="flex flex-col gap-5">
-                <h3 className="text-3xl font-semibold text-teal-700 text-center">Create Listing</h3>
+                <h3 className="text-3xl font-semibold text-center">Create Listing</h3>
                 <form className="w-full md:w-[90%] m-auto flex flex-col gap-4" onSubmit={handleSubmit(submitManagementForm)}>
                     <div className="w-full flex flex-row items-center justify-between md:justify-start">
                         <input disabled={isLoading || isLoadingUpload} type="file" name="imgUrl" accept="image/*" multiple className="cursor-pointer italic text-sm file:font-semibold file:text-sm file:px-3 file:py-2 file:bg-violet-50 file:rounded-[1rem] file:border-0" onChange={e => {
@@ -217,7 +218,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
                         <div className="w-full col-span-1 flex flex-col gap-3 mb-4 md:m-0">
                             <InputLabel disabled={isLoading} register={register} name="name" label="House Name" placeholder="House name" />
                             <TextArea disabled={isLoading} register={register} name="description" label="Description" placeholder="Describe your house..." />
-                            <InputLabel disabled={isLoading} register={register} name="address" label="Address" placeholder="Your house address" />
+                            <InputLabel disabled={isLoading} register={register} name="address" label="Address" placeholder="1 Street, Ward, District, City" />
 
                         </div>
                         <div className="w-full col-span-1 flex flex-col gap-4">

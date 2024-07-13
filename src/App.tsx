@@ -12,10 +12,11 @@ import Management from "@/components/private-route/management/Management"
 import PrivateRoute from "@/components/private-route/PrivateRoute";
 import ManagementListingId from "@/components/private-route/management/ManagementListingId";
 import ListingContent from "@/components/listing-content/ListingContent";
+import Buy from "@/pages/Buy";
+import Search from "@/pages/Search";
 // import Footer from "@/components/footer/Footer";
 
 function App() {
-
   return (
     <div className="w-full h-full px-4">
       <BrowserRouter>
@@ -25,6 +26,8 @@ function App() {
         {/*//todo: Set-up Routes */}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/buy" element={<Buy />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/about" element={<About />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/log-in" element={<Login />} />

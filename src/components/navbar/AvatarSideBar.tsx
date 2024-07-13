@@ -1,12 +1,12 @@
 import { UserReduxType, logoutFailure, logoutLoading, logoutSuccess } from "@/features/user/userSlice"
 import AvatarNav from "./AvatarNav"
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown, FaRegUser } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 import { useDispatch } from "react-redux";
-import { FiLogOut } from "react-icons/fi";
+import { FiEdit, FiLogOut } from "react-icons/fi";
 import { Button } from "../ui/button";
 
 interface AvatarSideBarProps {
@@ -66,8 +66,8 @@ const AvatarSideBar: React.FC<AvatarSideBarProps> = ({ currentUser }) => {
                 {isOpenAvatarSideBar ? <FaCaretDown className="text-xl rotate-180 transition-transform duration-300" /> : <FaCaretDown className="text-xl rotate-0 transition-transform duration-300" />}
             </div>
             {isOpenAvatarSideBar && <div className="w-[80%] ml-auto flex flex-col items-start gap-4 text-zinc-700 ">
-                <Link to="/management" className="hover:text-zinc-800 transition-colors">Management</Link>
-                <Link to="/profile" className="hover:text-zinc-800 transition-colors">User Information</Link>
+                <Link to="/management" className="flex flex-row items-center justify-start gap-2 hover:text-zinc-800 transition-colors"><div className="p-2 border border-black rounded-[25px]"><FiEdit /></div>Management Product</Link>
+                <Link to="/profile" className="flex flex-row items-center justify-start gap-2 hover:text-zinc-800 transition-colors"><div className="p-2 border border-black rounded-[25px]"><FaRegUser /></div>User Information</Link>
                 <Button className="flex flex-row items-center justify-start gap-2 ml-auto rounded-[50px] bg-rose-800" onClick={logout} >Log out <FiLogOut /></Button>
             </div>}
         </div>

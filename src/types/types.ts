@@ -29,6 +29,7 @@ export type ListingType = {
   bathrooms: number | undefined;
   regularPrice: number | undefined;
   discountPrice: number | undefined;
+  userId: string;
   createAt: Date;
   updateAt: Date;
 };
@@ -43,4 +44,19 @@ export type RequestInfoFormType = {
   phone: string;
   email: string;
   message: string;
+};
+
+export type HomeType = {
+  id?: string;
+  name: string;
+  description: string;
+  address: string;
+  imgUrl: string[];
+  formType: string;
+  squaremetre: number | undefined;
+  bedrooms: number | undefined;
+  bathrooms: number | undefined;
+  regularPrice: number | undefined;
+  discountPrice: number | undefined;
+  userId: string;
 };

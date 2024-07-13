@@ -11,16 +11,11 @@ const MainNav: React.FC<MainNavProps> = ({ className }) => {
     }, {
         label: 'Rent',
         href: '/rent'
-    }, {
-        label: 'Mortgage',
-        href: '/mortgage'
     }]
     return (
         <div className={cn('w-full', className)}>
             {dataNav.map((data, i) => {
-                return <Link key={i} to={data.href}><Button className="font-bold lg:font-normal" variant='nav'>{data.label}</Button></Link>
-
-
+                return <Link key={i} to={data.href}><Button className="font-semibold lg:font-normal" variant='nav'>{data.label}</Button></Link>
             })}
         </div >
     )

@@ -8,11 +8,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logoutFailure, logoutLoading, logoutSuccess } from "@/features/user/userSlice";
-import { FiLogOut } from "react-icons/fi";
+import { FiEdit, FiLogOut } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { FaRegUser } from "react-icons/fa";
 
 const AvatarNav = () => {
     const dispatch = useDispatch()
@@ -66,11 +67,11 @@ const AvatarNav = () => {
             <DropdownMenuContent className="w-50 bg-white rounded-[0.375rem]">
                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
                 <hr />
-                <DropdownMenuItem className="p-0"><Link to="/management" className="w-full rounded-[0.375rem] hover:bg-teal-700 hover:text-white transition p-2 ">Management</Link></DropdownMenuItem>
-                <DropdownMenuItem className="p-0"><Link to="/profile" className="w-full rounded-[0.375rem] hover:bg-teal-700 hover:text-white transition p-2">User Information</Link></DropdownMenuItem>
-                <DropdownMenuItem><Link className="flex flex-row justify-start items-center gap-2 font-semibold" to="" onClick={logout}>Log out <FiLogOut /></Link></DropdownMenuItem>
+                <DropdownMenuItem className="p-0"><Link to="/management" className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2 "><div className="p-2 border border-black rounded-[25px]"><FiEdit /></div>Management Product</Link></DropdownMenuItem>
+                <DropdownMenuItem className="p-0"><Link to="/profile" className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2"><div className="p-2 border border-black rounded-[25px]"><FaRegUser /></div>User Information</Link></DropdownMenuItem>
+                <DropdownMenuItem className=" p-0"><Link className="w-full flex flex-row justify-start items-center gap-2 font-semibold rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2" to="" onClick={logout}><div className="p-2 border border-black rounded-[25px]"><FiLogOut /></div>Log out </Link></DropdownMenuItem>
             </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu >
     )
 }
 

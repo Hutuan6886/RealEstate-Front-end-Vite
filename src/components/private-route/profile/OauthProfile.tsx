@@ -161,7 +161,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
                             <FormItem className="w-full col-span-1">
                                 <FormLabel className="font-semibold">Current Address</FormLabel>
                                 <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                    <Input placeholder="1 Street - Ward - District - City" {...field} />
+                                    <Input placeholder="1 Street, Ward, District, City" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

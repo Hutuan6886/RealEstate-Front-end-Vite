@@ -14,8 +14,11 @@ import ImageListingModal from "@/components/modal/ImageListingModal"
 import { Button } from "@/components/ui/button"
 import { FiHeart } from "react-icons/fi"
 import RequestInfoForm from "./RequestInfoForm"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 const ListingContent = () => {
+    const currentUser = useSelector((state: RootState) => state.user.currentUser)
     const [dataListing, setDataListing] = useState<ListingType>()
     const { listingId } = useParams()
 
@@ -117,7 +120,8 @@ const ListingContent = () => {
                     </div>
                 </div>
                 <div className="hidden lg:block col-span-1">
-                    <RequestInfoForm address={dataListing?.address} />
+                    {currentUser.id !== dataListing?.userId && <RequestInfoForm address={dataListing?.address} />}
+
                 </div>
             </div>
             <HomeHighlights parking={dataListing?.parking} price={dataListing?.regularPrice} sqft={dataListing?.squaremetre} createAt={dataListing?.createAt} />

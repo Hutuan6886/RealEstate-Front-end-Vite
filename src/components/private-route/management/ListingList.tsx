@@ -1,69 +1,40 @@
-import { useEffect, useState } from "react";
+import {
+  // useEffect, 
+  useState
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { closeDeleteListingModal, listingCreate, listingDelete, openDeleteListingModal } from "@/features/listing/listingSlice";
+import {
+  ListingReduxType,
+  closeDeleteListingModal,
+  // listingCreate, 
+  listingDelete, openDeleteListingModal
+} from "@/features/listing/listingSlice";
 import { RootState } from "@/redux/store";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { app } from "@/firebase";
 
 import { toast } from "@/components/ui/use-toast"
-import { UserReduxType } from "@/features/user/userSlice";
+// import { UserReduxType } from "@/features/user/userSlice";
 import ListingItem from "./ListingItem";
 import ModalDelete from "@/components/modal/ModalDelete";
 import { ManagementFormType } from "./Management";
+import { ListingType } from "@/types/types";
 
 
-interface ListingItemProps {
-  currentUser: UserReduxType
+interface ListingListProps {
+  title: string;
+  description?: string
+  dataListingList: ListingReduxType[] | ListingType[]
+  isLoading: boolean
 }
 
-const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
+const ListingList: React.FC<ListingListProps> = ({ title, description, dataListingList, isLoading }) => {
   //todo: STATE
-  const [isLoading, setIsloading] = useState<boolean>(false)
 
-  const dataListingList = useSelector((state: RootState) => state.listing.currentListingList)
-  const isOpenDeleteModal = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
+  const isOpenDeleteModal: boolean = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
   const dispatch = useDispatch()
   const [listingClicked, setListingClicked] = useState<ManagementFormType>()
-
-  useEffect(() => {
-
-    async function getListingList() {
-      setIsloading(true)
-      try {
-        const res = await fetch(`/api/listing/get-listing-list/${currentUser.id}`, {
-          method: 'GET',
-          headers: {
-            "Content-Type": "Application/json",
-          }
-        })
-        if (res.ok) {
-          const listingList = await res.json()
-          dispatch(listingCreate(listingList))
-          toast({
-            className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
-            description: 'Update listing is successfully.'
-          })
-        }
-        else {
-          toast({
-            title: "Update Listing",
-            className: "bg-red-600 text-white rounded-[0.375rem]",
-            description: "Update listing is failed!"
-          })
-        }
-      } catch (error) {
-        toast({
-          title: "Update Listing",
-          className: "bg-red-600 text-white rounded-[0.375rem]",
-          description: "Something went wrong!"
-        })
-      } finally {
-        setIsloading(false)
-      }
-    }
-    getListingList()
-  }, [currentUser, dispatch])
 
   const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[] | undefined): Promise<void> => {
     try {
@@ -122,18 +93,23 @@ const ListingList: React.FC<ListingItemProps> = ({ currentUser }) => {
   }
 
   return (
-    <div className="w-full h-full">
-      <h3 className="text-3xl text-teal-700 text-center font-semibold mb-5">Listing</h3>
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {dataListingList?.map((dataListing: ManagementFormType) => (
-          <div key={dataListing.id}>
-            <ListingItem maxChar={50} dataListing={dataListing} onDelete={() => {
-              dispatch(openDeleteListingModal())
-              setListingClicked(dataListing)
-            }} updateListingUrl={`/management/${dataListing.id}`} />
-          </div>
-        ))}
-        <ModalDelete title={`Delete ${listingClicked?.name} Listing Item`} description="For sure you want to delete it?" isOpen={isOpenDeleteModal} onClose={() => { dispatch(closeDeleteListingModal()) }} onConfirm={() => { deleteListingItem(listingClicked?.id, listingClicked?.imgUrl) }} />
+    <div className="w-full h-full my-10">
+      <div className=" flex flex-col gap-5">
+        <div className="w-[90%] md:w-[50%] m-auto flex flex-col gap-3">
+          <h3 className="text-3xl text-center font-semibold">{title}</h3>
+          <p className="text-zinc-600 text-sm text-center">{description}</p>
+        </div>
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          {dataListingList?.map((dataListing: ManagementFormType) => (
+            <div key={dataListing.id}>
+              <ListingItem maxChar={50} dataListing={dataListing} onDelete={() => {
+                dispatch(openDeleteListingModal())
+                setListingClicked(dataListing)
+              }} updateListingUrl={`/management/${dataListing.id}`} />
+            </div>
+          ))}
+          <ModalDelete title={`Delete ${listingClicked?.name} Listing Item`} description="For sure you want to delete it?" isOpen={isOpenDeleteModal} onClose={() => { dispatch(closeDeleteListingModal()) }} onConfirm={() => { deleteListingItem(listingClicked?.id, listingClicked?.imgUrl) }} />
+        </div>
       </div>
     </div>
   )
