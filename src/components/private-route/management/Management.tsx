@@ -6,25 +6,6 @@ import ListingList from "./ListingList"
 import { toast } from "@/components/ui/use-toast"
 import { listingCreate } from "@/features/listing/listingSlice"
 
-
-export type ManagementFormType = {
-    id?: string,
-    name: string,
-    description: string,
-    address: string,
-    imgUrl: string[],
-    formType: string,
-    houseType: string,
-    offer: boolean,
-    furnished: boolean,
-    parking: boolean,
-    squaremetre: number | undefined;
-    bedrooms: number | undefined;
-    bathrooms: number | undefined;
-    regularPrice: number | undefined;
-    discountPrice: number | undefined;
-}
-
 const Management = () => {
     //todo: CURRENTUSER
     const { currentUser } = useSelector((state: RootState) => state.user)

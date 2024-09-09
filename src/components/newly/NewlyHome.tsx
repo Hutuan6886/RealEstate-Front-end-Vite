@@ -1,38 +1,17 @@
-import { HomeType } from "@/types/types"
-import { useEffect, useState } from "react"
 import HomeList from "./HomeList"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 const NewlyHome = () => {
-    const [homeData, setHomeData] = useState<HomeType[]>()
-    useEffect(() => {
-        async function getAllListing() {
-            try {
-                const res = await fetch("/api/listing/get-all-listing", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "Application/json"
-                    },
-                    cache: "no-cache"
-                })
-                if (res.ok) {
-                    const allListing = await res.json()
-                    setHomeData(allListing)
-                }
-            } catch (error) {
-                console.log("getAllListing", error);
+    const allListing = useSelector((state: RootState) => state.listing.allListingList)
 
-            }
-        }
-        getAllListing()
-    }, [])
-
-    if (!homeData) {
+    if (!allListing) {
         return null
     }
 
     return (
         <div>
-            <HomeList title="Newly listed homes" homeData={homeData} />
+            <HomeList title="Newly listed homes" homeData={allListing} />
         </div>
     )
 }

@@ -8,7 +8,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { FaLocationDot } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
-import { cityData, provinceData } from "@/data/location";
+import { cityData, provinceData, LocationType } from "@/data/location";
 
 
 export type SearchFormType = z.infer<typeof SearchFormSchema>
@@ -18,8 +18,8 @@ interface SearchFieldProps {
     placeholder?: string
 }
 const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => {
-    const [suggestionProvince, setSuggestionProvince] = useState<string[]>([])
-    const [suggestionCity, setSuggestionCity] = useState<string[]>([])
+    const [suggestionProvince, setSuggestionProvince] = useState<LocationType[]>([])
+    const [suggestionCity, setSuggestionCity] = useState<LocationType[]>([])
     const [suggestionVillageName, setSuggestionVillageName] = useState<string[]>([])
     const [openSearchSuggest, setOpenSearchSuggest] = useState<boolean>(false)
     const [listingNameData, setListingNameData] = useState<string[]>()
@@ -36,21 +36,26 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     })
     const searchValue = watch("search")
 
-    const clickSearch = (searchTerm: string) => {
+    const clickSearch = (searchTerm: string, lat: number, lng: number) => {
         const urlParams = new URLSearchParams(window.location.search)
         urlParams.set("searchTerm", searchTerm)
+        urlParams.set("lat", lat.toString())
+        urlParams.set("lng", lng.toString())
         const searchQuery = urlParams.toString()
-        console.log(searchQuery);
         navigate(`/search?${searchQuery}`)
+        window.location.reload()
     }
 
     const submitSearch: SubmitHandler<SearchFormType> = (data) => {
-        console.log(data);
+        const findata = [...provinceData, ...cityData].find((item) => item.name.includes(data.search));
         const urlParams = new URLSearchParams(window.location.search)
         urlParams.set("searchTerm", data.search)
+        urlParams.set("lat", findata?.position.latitude.toString() as string)
+        urlParams.set("lng", findata?.position.longitude.toString() as string)
         const searchQuery = urlParams.toString()
-        console.log(searchQuery);
+
         navigate(`/search?${searchQuery}`)
+        window.location.reload()
     }
 
     useEffect(() => {
@@ -93,8 +98,8 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
         if (searchValue === "") {
             cityData && setSuggestionCity(cityData)
         } else {
-            provinceData && setSuggestionProvince(provinceData?.filter((province) => province.includes(searchValue)))
-            cityData && setSuggestionCity(cityData?.filter((city) => city.includes(searchValue)))
+            provinceData && setSuggestionProvince(provinceData?.filter((province) => province.name.includes(searchValue)))
+            cityData && setSuggestionCity(cityData?.filter((city) => city.name.includes(searchValue)))
             listingNameData && setSuggestionVillageName(listingNameData?.filter((villageName) => villageName.includes(searchValue)))
         }
 
@@ -130,7 +135,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
                 {openSearchSuggest &&
                     <div className={`absolute top-[50px] left-0 w-full h-fit max-h-[300px] overflow-y-scroll bg-white rounded-b-[0.375rem] border-2`}>
                         <div className=" flex flex-col p-1">
-                            {suggestionVillageName.length ?
+                            {/* {suggestionVillageName.length ?
                                 <>
                                     <h3 className="text-teal-700 font-semibold">Resident Area</h3>
                                     <div className="flex flex-col gap-1">{suggestionVillageName.map((name, i) => (
@@ -141,25 +146,25 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
                                                 <span className="text-xs text-zinc-500">Resident</span>
                                             </div>
                                         </div>
-                                    ))}</div></> : null}
+                                    ))}</div></> : null} */}
                         </div>
                         <div className=" flex flex-col p-1">
                             <h3 className="text-teal-700 font-semibold">Places</h3>
                             {suggestionCity.length ?
-                                <div className="flex flex-col gap-1">{suggestionCity.map((city, i) => (
-                                    <div key={i} className="flex flex-row gap-2 items-center justify-start p-3 cursor-pointer rounded-[0.375rem] hover:bg-zinc-300 transition" onClick={() => clickSearch(city)}>
+                                <div className="flex flex-col gap-1">{suggestionCity.map((city: LocationType, i) => (
+                                    <div key={i} className="flex flex-row gap-2 items-center justify-start p-3 cursor-pointer rounded-[0.375rem] hover:bg-zinc-300 transition" onClick={() => clickSearch(city.name, city.position.latitude, city.position.longitude)}>
                                         <FaLocationDot />
                                         <div className="flex flex-col gap-0">
-                                            <p>{city}</p>
+                                            <p>{city.name}</p>
                                             <span className="text-xs text-zinc-500">City</span>
                                         </div>
                                     </div>
                                 ))}</div> : null}
-                            {suggestionProvince.length ? <div className="flex flex-col gap-1">{suggestionProvince.map((province, i) => (
-                                <div key={i} className="flex flex-row gap-3 items-center justify-start p-3 cursor-pointer rounded-[0.375rem] hover:bg-zinc-300 transition" onClick={() => clickSearch(province)}>
+                            {suggestionProvince.length ? <div className="flex flex-col gap-1">{suggestionProvince.map((province: LocationType, i) => (
+                                <div key={i} className="flex flex-row gap-3 items-center justify-start p-3 cursor-pointer rounded-[0.375rem] hover:bg-zinc-300 transition" onClick={() => clickSearch(province.name, province.position.latitude, province.position.longitude)}>
                                     <FaLocationDot />
                                     <div className="flex flex-col">
-                                        <p>{province}</p>
+                                        <p>{province.name}</p>
                                         <span className="text-xs text-zinc-500">Province</span>
                                     </div>
                                 </div>

@@ -11,7 +11,6 @@ import {
 import { RootState } from "@/redux/store";
 import SideBar from "./SideBar";
 import SearchField from "@/components/search-field/search-field";
-import { cityData, provinceData } from "@/data/location";
 
 const Navbar = () => {
   const [isSideBar, setIsSidebar] = useState<boolean>(false)
@@ -30,18 +29,17 @@ const Navbar = () => {
           </Link>
           <MainNav className="hidden lg:flex flex-row items-center justify-start gap-3" />
         </div>
-        {location.search.length ? <SearchField className="w-full z-10" placeholder="Search for Village's name or City in Vietnam" province={provinceData} city={cityData} /> : null}
+        {location.pathname === "/search" ? <SearchField className="w-full z-10" placeholder="Search for Village's name or City in Vietnam" /> : null}
         <div className="hidden md:flex flex-row items-center justify-end gap-5">
           <div className="hidden lg:flex flex-row items-center">
-            <Button variant='nav'>Saved Homes</Button>
-            <Button variant='nav'>Saved Searched</Button>
+            <Link to='/saved-homes'><Button variant='nav'>Saved Homes</Button></Link>
           </div>
-          <div className="hidden lg:flex flex-row items-center">
+          <div className="hidden lg:flex flex-row flex-nowrap items-center">
             {!currentUser.id ?
-              <div>
+              <>
                 <Link to='/register'><Button variant='ghost'> Register</Button></Link>
                 <Link to='/log-in'><Button variant='login'> Log In</Button></Link>
-              </div> :
+              </> :
               <AvatarNav />
             }
           </div>

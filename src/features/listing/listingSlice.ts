@@ -1,3 +1,4 @@
+import { ListingType } from "@/types/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export type ListingReduxType = {
@@ -19,11 +20,13 @@ export type ListingReduxType = {
 };
 
 export interface ListingState {
-  currentListingList: ListingReduxType[];
+  allListingList: ListingType[];
+  currentListingList: ListingType[];
   isOpenDeleteModal: boolean;
 }
 
 const initialState: ListingState = {
+  allListingList: [],
   //todo: default value
   currentListingList: [
     {
@@ -42,6 +45,13 @@ const initialState: ListingState = {
       bathrooms: undefined,
       regularPrice: undefined,
       discountPrice: undefined,
+      location: {
+        latitude: "",
+        longitude: "",
+      },
+      userId: "",
+      createAt: new Date(),
+      updateAt: new Date(),
     },
   ],
   isOpenDeleteModal: false,
@@ -51,10 +61,13 @@ export const listingSlice = createSlice({
   name: "listing",
   initialState,
   reducers: {
-    listingCreate: (state, action: PayloadAction<ListingReduxType[]>) => {
+    saveAllListingList: (state, action: PayloadAction<ListingType[]>) => {
+      state.allListingList = action.payload;
+    },
+    listingCreate: (state, action: PayloadAction<ListingType[]>) => {
       state.currentListingList = action.payload;
     },
-    listingDelete: (state, action: PayloadAction<ListingReduxType>) => {
+    listingDelete: (state, action: PayloadAction<ListingType>) => {
       state.currentListingList = [
         ...state.currentListingList.filter(
           (listing) => listing.id !== action.payload.id
@@ -71,6 +84,7 @@ export const listingSlice = createSlice({
 });
 
 export const {
+  saveAllListingList,
   listingCreate,
   listingDelete,
   openDeleteListingModal,

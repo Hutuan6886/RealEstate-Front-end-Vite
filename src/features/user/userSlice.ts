@@ -10,6 +10,7 @@ export type UserReduxType = {
   birthday: string;
   gender: string;
   emailVerified: string;
+  savedHomes: string[];
   provider: string;
   createAt: string;
   updateAt: string;
@@ -30,6 +31,7 @@ const initialState: UserState = {
     birthday: "",
     gender: "",
     emailVerified: "",
+    savedHomes: [],
     provider: "",
     createAt: "",
     updateAt: "",
@@ -83,6 +85,7 @@ export const userSlice = createSlice({
         birthday: "",
         gender: "",
         emailVerified: "",
+        savedHomes: [],
         provider: "",
         createAt: "",
         updateAt: "",
@@ -108,6 +111,7 @@ export const userSlice = createSlice({
         birthday: "",
         gender: "",
         emailVerified: "",
+        savedHomes: [],
         provider: "",
         createAt: "",
         updateAt: "",
@@ -115,6 +119,21 @@ export const userSlice = createSlice({
     },
     logoutFailure: (state) => {
       state.isLoading = false;
+    },
+    saveAndUnsaveListing: (state, action: PayloadAction<string>) => {
+      const listingExisting = state.currentUser.savedHomes.findIndex(
+        (item) => item === action.payload
+      );
+      if (listingExisting != -1) {
+        state.currentUser.savedHomes = state.currentUser.savedHomes.filter(
+          (item) => item !== action.payload
+        );
+      } else {
+        state.currentUser.savedHomes = [
+          ...state.currentUser.savedHomes,
+          action.payload,
+        ];
+      }
     },
   },
 });
@@ -134,6 +153,7 @@ export const {
   logoutLoading,
   logoutSuccess,
   logoutFailure,
+  saveAndUnsaveListing,
 } = userSlice.actions;
 
 export default userSlice.reducer;

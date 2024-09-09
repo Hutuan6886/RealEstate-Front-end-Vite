@@ -131,8 +131,9 @@ const Profile = () => {
                         }} hidden accept="image/*" type="file" ref={fileRef} />
                         <img className="rounded-[50px] border-2 size-24 m-auto cursor-pointer" onClick={() => fileRef.current?.click()} src={imgFirebaseUrl ? imgFirebaseUrl as string : currentUser.imgUrl as string} alt="avatar" />
                         <div className="m-auto flex flex-col gap-4">
+                            <Link to="/management" className="flex flex-row items-center justify-start gap-4"><BiSolidDashboard size={22} /> Product Management</Link>
                             <Link to="/profile" className="flex flex-row items-center justify-start gap-4"><RiProfileLine size={22} /> User Information </Link>
-                            <Link to="/management" className="flex flex-row items-center justify-start gap-4"><BiSolidDashboard size={22} /> Management</Link>
+
                         </div>
                     </div>
                 </div>

@@ -18,12 +18,8 @@ import Checkbox from "@/components/ui/checkbox";
 import SelectForm from "@/components/ui/select-form";
 import { TbMeterSquare } from "react-icons/tb";
 import { UserReduxType } from "@/features/user/userSlice";
-import { ManagementFormType } from "./Management";
-
-const dataFormType = [{ value: 'Rent', label: 'Rent' }, { value: 'Sell', label: 'Sell' }]
-const dataHouseType = [{ value: 'Villa', label: 'Villa' }, { value: 'Duplex', label: 'Duplex' }, { value: 'Penthouse', label: 'Penthouse' }, { value: 'DetachedHouse', label: 'Detached House' }, { value: 'SemiDetachedHouse', label: 'Semi-detached House' }, { value: 'Apartment', label: 'Apartment' }, { value: 'Studio', label: 'Studio' }]
-
-// const imageList = ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxpXEuFEupvmJwrgiF1KYwktZFi3qsTHGhbQ&s', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxpXEuFEupvmJwrgiF1KYwktZFi3qsTHGhbQ&s']
+import { dataFormType, dataHouseType } from "@/data/dataForm";
+import { ListingType } from "@/types/types";
 
 interface ListingFormProps {
     currentUser: UserReduxType
@@ -44,11 +40,15 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     const {
         register,
         handleSubmit, setValue
-    } = useForm<ManagementFormType>({
+    } = useForm<ListingType>({
         defaultValues: {
             name: '',
             description: '',
             address: '',
+            location: {
+                latitude: undefined,
+                longitude: undefined
+            },
             imgUrl: [],
             formType: undefined,
             houseType: undefined,
@@ -178,7 +178,9 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
         setValue("imgUrl", imgUrls)
     }, [setValue, imgUrls])
 
-    const submitManagementForm: SubmitHandler<ManagementFormType> = async (data): Promise<void> => {
+    const submitManagementForm: SubmitHandler<ListingType> = async (data): Promise<void> => {
+        console.log("manager form", data);
+
         try {
             setIsLoading(true)
             await fetch('/api/listing/create', {
@@ -218,8 +220,19 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
                         <div className="w-full col-span-1 flex flex-col gap-3 mb-4 md:m-0">
                             <InputLabel disabled={isLoading} register={register} name="name" label="House Name" placeholder="House name" />
                             <TextArea disabled={isLoading} register={register} name="description" label="Description" placeholder="Describe your house..." />
-                            <InputLabel disabled={isLoading} register={register} name="address" label="Address" placeholder="1 Street, Ward, District, City" />
 
+                            <div className="bg-zinc-100 flex flex-col gap-2 p-4 rounded-[0.375rem]">
+                                <h3 className="font-semibold">Location</h3>
+                                <div className="pl-4 flex flex-col gap-2">
+                                    <InputLabel disabled={isLoading} register={register} name="address" label="Address" placeholder="Address" />
+                                    <div className="flex flex-row items-center justify-start gap-3">
+                                        <h3 className="text-sm">Latitude</h3>
+                                        <input {...register("location.latitude")} type="number" step="any" placeholder="10.123456" className="p-2 border border-black rounded-[0.375rem]" />
+                                        <h3 className="text-sm">Longitude</h3>
+                                        <input {...register("location.longitude")} type="number" step="any" placeholder="100.123456" className="p-2 border border-black rounded-[0.375rem]" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="w-full col-span-1 flex flex-col gap-4">
                             <SelectForm disabled={isLoading} register={register} name="formType" label="Business Types" data={dataFormType} onChange={(e: ChangeEvent<HTMLSelectElement>) => { setFormTypeValue(e.currentTarget.value) }} />

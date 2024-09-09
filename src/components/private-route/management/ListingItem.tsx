@@ -3,7 +3,6 @@ import { useState } from "react"
 import { FaRegEdit } from "react-icons/fa"
 import { LuTrash } from "react-icons/lu";
 import { IoBed } from "react-icons/io5"
-import { ManagementFormType } from "./Management"
 import { Link, useNavigate } from "react-router-dom"
 import { BiSolidBath } from "react-icons/bi"
 import { RiBuilding3Fill } from "react-icons/ri"
@@ -13,10 +12,11 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ListingReduxType } from "@/features/listing/listingSlice";
 
 interface ListingItemProps {
     maxChar: number
-    dataListing: ManagementFormType;
+    dataListing: ListingReduxType;
     updateListingUrl: string
     onDelete: () => void
 }
@@ -52,7 +52,7 @@ const ListingItem: React.FC<ListingItemProps> = ({ maxChar, dataListing, updateL
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-fit bg-white rounded-[0.375rem]">
                                 <div className="flex flex-col gap-2">
-                                    <Link to={updateListingUrl} className="flex items-center justify-around gap-2 p-2 rounded-[0.2rem] hover:bg-zinc-200">Update<FaRegEdit className="text-lg" /></Link>
+                                    <Link to={updateListingUrl} className="flex items-center justify-around gap-2 p-2 rounded-[0.2rem] cursor-pointer hover:bg-zinc-200">Update<FaRegEdit className="text-lg" /></Link>
                                     <div className=" text-black bg-white flex items-center justify-around gap-2 p-2 rounded-[0.2rem] cursor-pointer hover:bg-zinc-200" onClick={onDelete}>Delete<LuTrash className="text-lg" /></div>
                                 </div>
                             </DropdownMenuContent>

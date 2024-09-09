@@ -18,6 +18,10 @@ export type ListingType = {
   name: string;
   description: string;
   address: string;
+  location: {
+    latitude: string;
+    longitude: string;
+  };
   imgUrl: string[];
   formType: string;
   houseType: string;
@@ -53,10 +57,34 @@ export type HomeType = {
   address: string;
   imgUrl: string[];
   formType: string;
+  houseType: string;
   squaremetre: number | undefined;
   bedrooms: number | undefined;
   bathrooms: number | undefined;
   regularPrice: number | undefined;
   discountPrice: number | undefined;
   userId: string;
+  location: {
+    latitude: string;
+    longitude: string;
+  };
+};
+
+export type FilterFormType = {
+  searchTerm: string;
+  lat: number;
+  lng: number;
+  price: {
+    min: string;
+    max: string;
+  };
+  beds: number;
+  baths: number;
+  houseType: string[];
+  formType: "Buy" | "Rent" | string;
+  squarefeet: {
+    min: string;
+    max: string;
+  };
+  keywords: string[];
 };

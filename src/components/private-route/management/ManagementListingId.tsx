@@ -13,10 +13,10 @@ import TextArea from "@/components/ui/text-area"
 import SelectForm from "@/components/ui/select-form"
 import { TbMeterSquare } from "react-icons/tb"
 import Checkbox from "@/components/ui/checkbox"
-import { ManagementFormType } from "./Management"
 import { Button } from "@/components/ui/button"
 import { MdCloudUpload } from "react-icons/md"
 import { ImageList } from "./ImageList"
+import { ListingType } from "@/types/types";
 
 
 const dataFormType = [{ value: 'Rent', label: 'Rent' }, { value: 'Sell', label: 'Sell' }]
@@ -44,7 +44,7 @@ const ManagementListingId = () => {
 
     //todo: FORM
     const { register, handleSubmit, getValues,
-        reset } = useForm<ManagementFormType>({
+        reset } = useForm<ListingType>({
             defaultValues: {
                 name: '',
                 description: '',
@@ -201,7 +201,7 @@ const ManagementListingId = () => {
         })
     }
 
-    const submitUpdateListing: SubmitHandler<ManagementFormType> = async (data): Promise<void> => {
+    const submitUpdateListing: SubmitHandler<ListingType> = async (data): Promise<void> => {
         setIsLoading(true)
         try {
             const res = await fetch(`/api/listing/update-listing-item/${listingId}`, {

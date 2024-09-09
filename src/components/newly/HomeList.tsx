@@ -5,6 +5,8 @@ import {
     // MouseEvent, 
     useEffect, useRef, useState
 } from "react";
+import TitleComponent from "../ui/title-component";
+import useWindowSize from "@/hooks/useWindowSize";
 
 interface HomeListProps {
     title: string;
@@ -13,6 +15,9 @@ interface HomeListProps {
 }
 
 const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => {
+
+    const clientScreenSize = useWindowSize()
+
     const [isHiddenLeftButton, setHiddenLeftButton] = useState<boolean>(false)
     const [isHiddenRightButton, setHiddenRightButton] = useState<boolean>(false)
 
@@ -44,12 +49,22 @@ const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => 
     //todo: Click swiper button to slide
     const HandleSlidingLeft = () => {
         if (!swiperRef.current) return
-        swiperRef.current.scrollLeft -= swiperRef.current.clientWidth
-
+        if (clientScreenSize && clientScreenSize < 640) {
+            swiperRef.current.scrollLeft -= 250
+        }
+        else {
+            swiperRef.current.scrollLeft -= 250 * 3
+        }
     }
     const HandleSlidingRight = () => {
         if (!swiperRef.current) return
-        swiperRef.current.scrollLeft += swiperRef.current.clientWidth
+        if (clientScreenSize && clientScreenSize < 640) {
+            swiperRef.current.scrollLeft += 250
+        }
+        else {
+            swiperRef.current.scrollLeft += 250 * 3
+        }
+
     }
     useEffect(() => {
         //todo: Ẩn hiện button left và right sau khi swipe 
@@ -74,32 +89,25 @@ const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => 
     }
 
     return (
-        <div className="w-full h-full my-10">
-            <div className=" flex flex-col gap-5">
-                <div className="w-[90%] md:w-[50%] m-auto flex flex-col gap-3">
-                    <h3 className="text-4xl text-center font-semibold">{title}</h3>
-                    <p className="text-zinc-600 text-sm text-center">{description}</p>
-                </div>
-                <div className="relative">
-                    <div className="w-full flex flex-row gap-4 flex-nowrap overflow-x-hidden scroll-smooth"
-                        ref={swiperRef}
-                        // onMouseDown={(event: MouseEvent) => handleOnMouseDown(event)}
-                        // onMouseMove={(event: MouseEvent) => handleOnMouseMove(event)}
-                        // onMouseUp={handleOnMouseUp}
-                        onScroll={handleOnScroll}
+        <TitleComponent title={title} description={description}>
+            <div className="relative">
+                <div className="w-full flex flex-row gap-4 flex-nowrap overflow-x-hidden scroll-smooth"
+                    ref={swiperRef}
+                    // onMouseDown={(event: MouseEvent) => handleOnMouseDown(event)}
+                    // onMouseMove={(event: MouseEvent) => handleOnMouseMove(event)}
+                    // onMouseUp={handleOnMouseUp}
+                    onScroll={handleOnScroll}
 
-                    > {homeData?.map((homeItem: HomeType) => (
-                        <div key={homeItem.id}>
-                            <HomeItem homeItemData={homeItem} />
-                        </div>
-                    ))}</div>
-                    {!isHiddenLeftButton ? <div className="absolute top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
-                    {!isHiddenRightButton ? <div className="absolute top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
-
-                </div>
+                > {homeData?.map((homeItem: HomeType) => (
+                    <div key={homeItem.id}>
+                        <HomeItem homeItemData={homeItem} />
+                    </div>
+                ))}</div>
+                {!isHiddenLeftButton ? <div className="absolute top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
+                {!isHiddenRightButton ? <div className="absolute top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
 
             </div>
-        </div>
+        </TitleComponent>
     )
 }
 

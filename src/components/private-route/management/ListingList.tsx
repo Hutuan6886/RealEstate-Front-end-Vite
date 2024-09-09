@@ -17,7 +17,6 @@ import { toast } from "@/components/ui/use-toast"
 // import { UserReduxType } from "@/features/user/userSlice";
 import ListingItem from "./ListingItem";
 import ModalDelete from "@/components/modal/ModalDelete";
-import { ManagementFormType } from "./Management";
 import { ListingType } from "@/types/types";
 
 
@@ -34,7 +33,7 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
   const isOpenDeleteModal: boolean = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
   const dispatch = useDispatch()
-  const [listingClicked, setListingClicked] = useState<ManagementFormType>()
+  const [listingClicked, setListingClicked] = useState<ListingReduxType>()
 
   const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[] | undefined): Promise<void> => {
     try {
@@ -100,7 +99,7 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
           <p className="text-zinc-600 text-sm text-center">{description}</p>
         </div>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-          {dataListingList?.map((dataListing: ManagementFormType) => (
+          {dataListingList?.map((dataListing: ListingReduxType) => (
             <div key={dataListing.id}>
               <ListingItem maxChar={50} dataListing={dataListing} onDelete={() => {
                 dispatch(openDeleteListingModal())
