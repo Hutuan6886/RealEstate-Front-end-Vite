@@ -1,4 +1,4 @@
-export type UserType = {
+export type UserReduxType = {
   id: string;
   userName: string;
   email: string;
@@ -8,34 +8,48 @@ export type UserType = {
   birthday: string;
   gender: string;
   emailVerified: string;
+  savedHomes: string[];
+  listing: ListingReduxType[];
   provider: string;
-  createAt: Date;
-  updateAt: Date;
+  createAt: string;
+  updateAt: string;
 };
 
-export type ListingType = {
+export type ListingReduxType = {
   id?: string;
   name: string;
   description: string;
-  address: string;
-  location: {
-    latitude: string;
-    longitude: string;
-  };
   imgUrl: string[];
   formType: string;
   houseType: string;
   offer: boolean;
   furnished: boolean;
   parking: boolean;
+  amenities: string[];
   squaremetre: number | undefined;
   bedrooms: number | undefined;
   bathrooms: number | undefined;
-  regularPrice: number | undefined;
-  discountPrice: number | undefined;
-  userId: string;
+  regularPrice: number;
+  discountPrice?: number;
+
   createAt: Date;
   updateAt: Date;
+
+  userId: string;
+  address: Address;
+  location: Location;
+};
+
+export type Location = {
+  latitude: string;
+  longitude: string;
+};
+export type Address = {
+  number: string;
+  street: string;
+  ward: string;
+  district: string;
+  city: string;
 };
 
 export type LandlordType = {
@@ -48,26 +62,6 @@ export type RequestInfoFormType = {
   phone: string;
   email: string;
   message: string;
-};
-
-export type HomeType = {
-  id?: string;
-  name: string;
-  description: string;
-  address: string;
-  imgUrl: string[];
-  formType: string;
-  houseType: string;
-  squaremetre: number | undefined;
-  bedrooms: number | undefined;
-  bathrooms: number | undefined;
-  regularPrice: number | undefined;
-  discountPrice: number | undefined;
-  userId: string;
-  location: {
-    latitude: string;
-    longitude: string;
-  };
 };
 
 export type FilterFormType = {

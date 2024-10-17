@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useDispatch, useSelector } from "react-redux"
-import { loginFailure, loginLoading, loginSuccess } from "@/features/user/userSlice"
+import { loginUserFailure, loginUserLoading, loginUserSuccess } from "@/features/user/userSlice"
 import Oauth from "./Oauth"
 import { RootState } from "@/redux/store"
 
@@ -30,9 +30,8 @@ const RegisterForm = () => {
         }
     })
     const submitLogin = async (data: LoginFormType) => {
-        // console.log(data);
         try {
-            dispatch(loginLoading())
+            dispatch(loginUserLoading())
             const res = await fetch('/api/auth/login', {
                 headers: {
                     "Content-Type": "Application/json"
@@ -45,7 +44,7 @@ const RegisterForm = () => {
                 //todo: res trả về user sau khi log in thành công
                 const dataUser = await res.json();
 
-                dispatch(loginSuccess(dataUser))   //* push dataUser vừa log in lên redux
+                dispatch(loginUserSuccess(dataUser))   //* push dataUser vừa log in lên redux
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Log in user is successfully."
@@ -54,7 +53,6 @@ const RegisterForm = () => {
             } else {
                 //todo: res trả về error sau khi log in không thành công
                 const { success, message } = await res.json()
-                console.log(res);
                 if (!success) {
                     //* res trả về error
                     toast({
@@ -63,7 +61,7 @@ const RegisterForm = () => {
                         description: message
                     })
                 }
-                dispatch(loginFailure())
+                dispatch(loginUserFailure())
             }
         } catch (error) {
             toast({
@@ -73,7 +71,7 @@ const RegisterForm = () => {
                 description: "There was a problem with your request.",
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
-            dispatch(loginFailure())
+            dispatch(loginUserFailure())
         } finally {
             loginForm.reset()
         }
@@ -93,7 +91,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type="email" className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="abc@gmail.com" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -107,7 +105,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type="password" className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="••••••••" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />

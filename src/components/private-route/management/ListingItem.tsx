@@ -1,18 +1,17 @@
-import { formatter } from "@/lib/utils"
 import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+
+import { formatter } from "@/lib/utils"
+import { ListingReduxType } from "@/types/types"
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+
 import { FaRegEdit } from "react-icons/fa"
 import { LuTrash } from "react-icons/lu";
 import { IoBed } from "react-icons/io5"
-import { Link, useNavigate } from "react-router-dom"
 import { BiSolidBath } from "react-icons/bi"
 import { RiBuilding3Fill } from "react-icons/ri"
 import { HiDotsHorizontal } from "react-icons/hi";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ListingReduxType } from "@/features/listing/listingSlice";
 
 interface ListingItemProps {
     maxChar: number
@@ -63,7 +62,9 @@ const ListingItem: React.FC<ListingItemProps> = ({ maxChar, dataListing, updateL
                         <div className="flex flex-row items-center justify-start gap-0.5"><BiSolidBath className="text-zinc-500" />{dataListing.bathrooms}</div>
                         <div className="flex flex-row items-center justify-start gap-0.5"><RiBuilding3Fill className="text-zinc-500" />{dataListing.squaremetre}</div>
                     </div>
-                    <div className="text-sm text-zinc-700">{dataListing.address}</div>
+                    <div className="text-sm text-zinc-700">
+                        <span>{dataListing.address.number}</span> <span>{dataListing.address.street}</span>, <span>{dataListing.address.ward}</span>, <span>{dataListing.address.district}</span>, <span>{dataListing.address.city}</span>
+                    </div>
                     {
                         //*description < 20 character -> render full description, nếu description > 20 thì render textShow
                         dataListing.description.length < maxChar ? <p className="inline text-sm text-zinc-600">{dataListing.description}</p> : <div>

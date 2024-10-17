@@ -1,20 +1,19 @@
+import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod"
-import { ProfileOauthForm } from "@/form_schema/FormSchema"
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { RootState } from "@/redux/store";
-import { updateFailure, updateLoading, updateSuccess } from "@/features/user/userSlice";
+import { useForm } from "react-hook-form"
 
-import { Button } from "@/components/ui/button";
+import { RootState } from "@/redux/store";
+import { ProfileOauthForm } from "@/form_schema/FormSchema"
+import { updateUserFailure, updateUserLoading, updateUserSuccess } from "@/features/user/userSlice";
+
+import { ToastAction } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-    useDispatch,
-    useSelector
-} from "react-redux";
-import { ToastAction } from "@/components/ui/toast";
-import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+
 
 interface OauthProfileProps {
     imgFirebaseUrl?: string
@@ -42,7 +41,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
         data = { ...data, imgUrl: imgFirebaseUrl || currentUser.imgUrl }
         console.log(data);
         try {
-            dispatch(updateLoading())
+            dispatch(updateUserLoading())
             const res = await fetch(`/api/user/update-oauth/${currentUser.id}`, {
                 method: 'post',
                 headers: {
@@ -53,7 +52,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
             if (res.ok) {
                 const dataUser = await res.json();
                 console.log("Data user is updated", dataUser);
-                dispatch(updateSuccess(dataUser))
+                dispatch(updateUserSuccess(dataUser))
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Update user is successfully."
@@ -82,7 +81,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
         } finally {
-            dispatch(updateFailure())
+            dispatch(updateUserFailure())
         }
 
     }
@@ -100,7 +99,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
                                 <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                     <Input type="text" placeholder="Lê Hữu Tuân" {...field} />
                                 </FormControl>
-                                <FormMessage className="text-sm text-red-600" />
+                                <FormMessage className="text-rose-800 text-xs" />
                             </FormItem>
                         )}
                     />
@@ -114,7 +113,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
                                 <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                     <Input type="number" placeholder="0353••••••" {...field} />
                                 </FormControl>
-                                <FormMessage className="text-sm text-red-600" />
+                                <FormMessage className="text-rose-800 text-xs" />
                             </FormItem>
                         )}
                     />

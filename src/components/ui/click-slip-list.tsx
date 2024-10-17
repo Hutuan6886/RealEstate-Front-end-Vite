@@ -1,20 +1,18 @@
-import { HomeType } from "@/types/types"
-import HomeItem from "./HomeItem";
-import { FaChevronRight, FaChevronLeft } from "react-icons/fa6";
-import {
-    // MouseEvent, 
-    useEffect, useRef, useState
-} from "react";
-import TitleComponent from "../ui/title-component";
+import { useEffect, useRef, useState } from "react";
+
 import useWindowSize from "@/hooks/useWindowSize";
 
+import TitleComponent from "@/components/ui/title-component";
+
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa6";
+
 interface HomeListProps {
-    title: string;
+    title?: string;
     description?: string
-    homeData: HomeType[]
+    children: React.ReactNode
 }
 
-const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => {
+const ClickSlipList: React.FC<HomeListProps> = ({ children, title, description }) => {
 
     const clientScreenSize = useWindowSize()
 
@@ -84,7 +82,7 @@ const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => 
         }
     }, [scrollLeft])
 
-    if (!homeData) {
+    if (!children) {
         return null
     }
 
@@ -98,11 +96,9 @@ const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => 
                     // onMouseUp={handleOnMouseUp}
                     onScroll={handleOnScroll}
 
-                > {homeData?.map((homeItem: HomeType) => (
-                    <div key={homeItem.id}>
-                        <HomeItem homeItemData={homeItem} />
-                    </div>
-                ))}</div>
+                >
+                    {children}
+                </div>
                 {!isHiddenLeftButton ? <div className="absolute top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
                 {!isHiddenRightButton ? <div className="absolute top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
 
@@ -111,4 +107,4 @@ const HomeList: React.FC<HomeListProps> = ({ homeData, title, description }) => 
     )
 }
 
-export default HomeList
+export default ClickSlipList

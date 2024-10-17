@@ -17,14 +17,15 @@ const SideBar: React.FC<SideBarProps> = ({ visible, closeSideBar, currentUser })
             <div className={`fixed z-20 w-[60%] md:w-[40%] border-0 h-full bg-zinc-800 rounded-l-[0.075rem] transition-all ${!visible ? "top-0 -right-[60%] md:-right-[40%]" : "top-0 right-0"}`}>
                 <div className="relative w-full h-full p-3">
                     <Button variant='ghost' className="absolute top-1 left-1 bg-transparent hover:bg-transparent text-xl text-white" onClick={closeSideBar}><IoClose /></Button>
-                    <div className="translate-y-16 flex flex-col items-start gap-2">
+                    <div className="translate-y-16 flex flex-col items-start gap-3">
                         <MainNav className="flex flex-col items-start text-white" />
-                        <Button className="text-white font-semibold" variant='nav'>Saved Homes</Button>
-                        <Button className="text-white font-semibold" variant='nav'>Saved Searched</Button>
+                        {currentUser.id
+                            ? <Link to='/saved-homes'><Button className="text-white font-semibold" variant='nav'>Saved Homes</Button></Link>
+                            : null}
                         {!currentUser.id ?
-                            <div className="w-full flex flex-col items-center gap-3">
-                                <Link className="w-full " to='/register'><Button variant='ghost' className="w-full font-semibold text-lg text-teal-700 bg-white"> Register</Button></Link>
-                                <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-semibold text-lg text-white bg-black hover:bg-black"> Log In</Button></Link>
+                            <div className="w-full flex flex-row items-center gap-2">
+                                <Link className="w-full " to='/register'><Button variant='default' className="w-full font-semibold text-lg bg-white text-zinc-700"> Register</Button></Link>
+                                <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-semibold text-lg"> Log In</Button></Link>
                             </div>
                             : <AvatarSideBar currentUser={currentUser} />}
                     </div>

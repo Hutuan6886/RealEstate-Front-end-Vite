@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react"
-import { exploreProvinceData } from "@/data/location"
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
-import TitleComponent from "../ui/title-component"
-import ExploreItem from "./ExploreItem"
+
 import useWindowSize from "@/hooks/useWindowSize"
+import { exploreProvinceData } from "@/data/location"
+
+import TitleComponent from "@/components/ui/title-component"
+import ExploreItem from "./ExploreItem"
+
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
 
 const ExploreHome = () => {
     const clientScreenSize = useWindowSize()
@@ -21,32 +24,28 @@ const ExploreHome = () => {
     //todo: Click swiper button to slide
     const HandleSlidingLeft = () => {
         if (!swiperRef.current) return
-        swiperRef.current.scrollLeft -= 190
+
+        if (clientScreenSize && clientScreenSize < 480) {
+            swiperRef.current.scrollLeft -= 190
+        }
+        else {
+            swiperRef.current.scrollLeft -= 190 * 3
+        }
     }
     const HandleSlidingRight = () => {
         if (!swiperRef.current) return
-        swiperRef.current.scrollLeft += 190
-    }
-    useEffect(() => {
-        //todo: Ẩn hiện button left và right sau khi swipe 
-        //todo: swiperRef.current.scrollLeft: Vị trí của client view sau khi scroll
-        //todo: swiperRef.current.scrollWidth: width của scroll view
-        //todo: swiperRef.current.clientWidth: width của client view
-        if (!swiperRef.current) return
-        if (scrollLeft === (swiperRef.current.scrollWidth - swiperRef.current.clientWidth)) {
-            setHiddenRightButton(true)
-        }
-        else if (scrollLeft === 1 || !swiperRef.current.scrollLeft) {
-            setHiddenLeftButton(true)
+
+        if (clientScreenSize && clientScreenSize < 480) {
+            swiperRef.current.scrollLeft += 190
         }
         else {
-            setHiddenLeftButton(false)
-            setHiddenRightButton(false)
+            swiperRef.current.scrollLeft += 190 * 3
         }
-    }, [scrollLeft])
+    }
 
     useEffect(() => {
         if (!swiperRef.current) return
+
         if (scrollLeft === (swiperRef.current.scrollWidth - swiperRef.current.clientWidth)) {
             setHiddenRightButton(true)
         }
@@ -63,12 +62,13 @@ const ExploreHome = () => {
         return null
     }
 
+
     return (
         <TitleComponent title="Explore Home" description="Take a deep dive and browse homes for sale, original neighborhood photos, resident reviews and local insights to find what is right for you.">
             {
                 clientScreenSize > 1300
                     ?
-                    <div className="flex flex-row gap-3 "
+                    <div className="w-full h-full flex flex-row gap-3 "
                     >
                         <div className="grid grid-cols-5 gap-3">
                             {exploreProvinceData.map((province, i) => (
@@ -81,8 +81,8 @@ const ExploreHome = () => {
                         </div>
                     </div>
                     :
-                    <div className="relative">
-                        <div className="w-full flex flex-row gap-3 flex-nowrap overflow-x-hidden scroll-smooth"
+                    <div className="relative w-full h-full">
+                        <div className="w-full h-full flex flex-row gap-3 flex-nowrap overflow-x-hidden scroll-smooth"
                             ref={swiperRef}
                             onScroll={handleOnScroll}
                         >
@@ -92,8 +92,8 @@ const ExploreHome = () => {
                                 </div>
                             ))}
                         </div>
-                        {!isHiddenLeftButton ? <div className="absolute z-20 top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
-                        {!isHiddenRightButton ? <div className="absolute z-20 top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
+                        {!isHiddenLeftButton ? <div className="absolute z-10 top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
+                        {!isHiddenRightButton ? <div className="absolute z-10 top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
                     </div>
             }
         </TitleComponent>

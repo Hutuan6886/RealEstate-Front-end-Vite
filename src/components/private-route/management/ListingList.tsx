@@ -1,35 +1,28 @@
-import {
-  // useEffect, 
-  useState
-} from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  ListingReduxType,
-  closeDeleteListingModal,
-  // listingCreate, 
-  listingDelete, openDeleteListingModal
-} from "@/features/listing/listingSlice";
-import { RootState } from "@/redux/store";
-import { deleteObject, getStorage, ref } from "firebase/storage";
 import { app } from "@/firebase";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
-import { toast } from "@/components/ui/use-toast"
-// import { UserReduxType } from "@/features/user/userSlice";
+import { RootState } from "@/redux/store";
+import { closeDeleteListingModal, openDeleteListingModal } from "@/features/listing/listingSlice";
+import { deleteListing } from "@/features/user/userSlice";
+import { ListingReduxType } from "@/types/types";
+
 import ListingItem from "./ListingItem";
 import ModalDelete from "@/components/modal/ModalDelete";
-import { ListingType } from "@/types/types";
+import { toast } from "@/components/ui/use-toast"
+
 
 
 interface ListingListProps {
   title: string;
   description?: string
-  dataListingList: ListingReduxType[] | ListingType[]
-  isLoading: boolean
+  dataListingList: ListingReduxType[]
+  isLoading?: boolean
 }
 
 const ListingList: React.FC<ListingListProps> = ({ title, description, dataListingList, isLoading }) => {
   //todo: STATE
-
   const isOpenDeleteModal: boolean = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
   const dispatch = useDispatch()
@@ -46,7 +39,7 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
       })
       if (res.ok) {
         const listingDeleted = await res.json()
-        dispatch(listingDelete(listingDeleted))
+        dispatch(deleteListing(listingDeleted))
 
         if (!listingImgUrl) {
           return

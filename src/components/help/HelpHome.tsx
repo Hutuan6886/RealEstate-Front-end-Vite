@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
-import TitleComponent from "../ui/title-component"
+
+import TitleComponent from "@/components/ui/title-component"
 import HelpItem from "./HelpItem"
 
 const HelpHome = () => {

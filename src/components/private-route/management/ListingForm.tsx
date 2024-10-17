@@ -1,50 +1,62 @@
-import {
-    ChangeEvent,
-    useEffect,
-    useState
-} from "react"
-import { MdCloudUpload } from "react-icons/md";
+import { ChangeEvent, useState } from "react"
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import { app } from "@/firebase";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { addListing } from "@/features/user/userSlice";
+import { dataFormType, dataHouseType } from "@/data/dataForm";
+import { UserReduxType } from "@/types/types";
 import { toast } from "@/components/ui/use-toast";
-import {
-    SubmitHandler, useForm
-} from "react-hook-form";
-import { ImageList } from "./ImageList";
-import { Button } from "@/components/ui/button";
+import { ManageListingFormSchema } from "@/form_schema/FormSchema";
+
 import InputLabel from "@/components/ui/input-label";
+import InputCurrencyB from "@/components/ui/input-currency-B";
 import TextArea from "@/components/ui/text-area";
 import Checkbox from "@/components/ui/checkbox";
 import SelectForm from "@/components/ui/select-form";
+import FilterKeywords from "@/components/ui/filter-keywords";
+
+import { ImageList } from "./ImageList";
+import { Button } from "@/components/ui/button";
+
 import { TbMeterSquare } from "react-icons/tb";
-import { UserReduxType } from "@/features/user/userSlice";
-import { dataFormType, dataHouseType } from "@/data/dataForm";
-import { ListingType } from "@/types/types";
+import { MdCloudUpload } from "react-icons/md";
 
 interface ListingFormProps {
     currentUser: UserReduxType
 }
 
+export type ManageListingFormType = z.infer<typeof ManageListingFormSchema>
+
 const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     //todo: STATE
     const [valueOfferField, setValueOfferField] = useState<boolean>(false)
     const [formTypeValue, setFormTypeValue] = useState<string>()
-    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     //todo: IMG UPLOAD STATE
-    const [files, setUploadFiles] = useState<FileList | null>()
-    const [imgUrls, setImgUrls] = useState<string[]>([])
     const [isLoadingUpload, setLoadingUpload] = useState<boolean>(false)
+    const [files, setUploadFiles] = useState<FileList | null>()
+
+    const dispatch = useDispatch()
 
     //todo: FORM
     const {
-        register,
-        handleSubmit, setValue
-    } = useForm<ListingType>({
+        register, watch, reset,
+        handleSubmit, setValue, formState: { errors, isSubmitting }
+    } = useForm<ManageListingFormType>({
         defaultValues: {
             name: '',
             description: '',
-            address: '',
+            address: {
+                number: '',
+                street: '',
+                ward: '',
+                district: '',
+                city: '',
+            },
             location: {
                 latitude: undefined,
                 longitude: undefined
@@ -54,13 +66,15 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
             houseType: undefined,
             furnished: false,
             parking: false,
+            offer: false,
+            amenities: [],
             squaremetre: undefined,
             bedrooms: undefined,
             bathrooms: undefined,
-            offer: false,
-            regularPrice: undefined,
-            discountPrice: undefined
-        }
+            regularPrice: '0',
+            discountPrice: '0'
+        },
+        resolver: zodResolver(ManageListingFormSchema)
     })
 
     //todo: Firebase rule: a img is less than 2 MB
@@ -167,23 +181,50 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
             },    //* Xử lý nếu có error
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url: string) => {
-                    setImgUrls((existing) => [...existing, url])     //* set từng img trả về vào mảng state imgUrls
+                    setValue("imgUrl", [...watch("imgUrl"), url]) //* set từng img trả về vào imgUrls form là data để hiển thị trên layouts
                 })
             }
         )
     }
 
-    useEffect(() => {
-        //todo: Update img array
-        setValue("imgUrl", imgUrls)
-    }, [setValue, imgUrls])
+    const deleteImgStorage = async (imgUrl: string) => {
+        //todo: delete img trong firebase
+        const storage = getStorage(app);
+        // Create a reference to the file to delete
+        const storageRef = ref(storage, imgUrl);
+        // Delete the file
+        await deleteObject(storageRef).then(async () => {
+            try {
+                //todo: Delete imgUrl tại form để hiển thị trên layout
+                setValue("imgUrl", [...watch("imgUrl").filter((img: string) => img !== imgUrl)])
+            } catch (error) {
+                return toast({
+                    title: "Delete image storage",
+                    className: "bg-red-600 text-white rounded-[0.375rem]",
+                    description: 'Something went wrong!'
+                })
+            }
+            // File deleted successfully
+            toast({
+                className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+                description: 'Delete image storage is successfully.'
+            })
+        }).catch((error) => {
+            // Uh-oh, an error occurred!
+            console.log(error);
+        })
+    }
 
-    const submitManagementForm: SubmitHandler<ListingType> = async (data): Promise<void> => {
-        console.log("manager form", data);
+    const changeCheckedOffer = (e: ChangeEvent<HTMLInputElement>) => {
+        setValueOfferField(e.target.checked)
+        if (!e.target.checked) {
+            setValue("discountPrice", "0")
+        }
+    }
 
+    const submitManagementForm = async (data: ManageListingFormType) => {
         try {
-            setIsLoading(true)
-            await fetch('/api/listing/create', {
+            const res = await fetch('/api/listing/create', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -191,11 +232,20 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
                 cache: 'no-cache',
                 body: JSON.stringify({ ...data, userId: currentUser.id })
             })
+            if (res.ok) {
+                const newListing = await res.json();
+                dispatch(addListing(newListing));
+                reset();
+            }
+            else {
+                toast({
+                    title: "Create Listing",
+                    className: "bg-red-600 text-white rounded-[0.375rem]",
+                    description: "Create listing failed!"
+                })
+            }
         } catch (error) {
             console.log(error);
-        } finally {
-            setIsLoading(false)
-            window.location.reload()
         }
     }
 
@@ -205,56 +255,66 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
                 <h3 className="text-3xl font-semibold text-center">Create Listing</h3>
                 <form className="w-full md:w-[90%] m-auto flex flex-col gap-4" onSubmit={handleSubmit(submitManagementForm)}>
                     <div className="w-full flex flex-row items-center justify-between md:justify-start">
-                        <input disabled={isLoading || isLoadingUpload} type="file" name="imgUrl" accept="image/*" multiple className="cursor-pointer italic text-sm file:font-semibold file:text-sm file:px-3 file:py-2 file:bg-violet-50 file:rounded-[1rem] file:border-0" onChange={e => {
+                        <input disabled={isSubmitting || isLoadingUpload} type="file" name="imgUrl" accept="image/*" multiple className="cursor-pointer italic text-sm file:font-semibold file:text-sm file:px-3 file:py-2 file:bg-violet-50 file:rounded-[1rem] file:border-0" onChange={e => {
                             if (e.target.files === null) {
                                 return
                             }
                             setUploadFiles(e.target.files)
                         }} />
-                        <Button disabled={isLoading || isLoadingUpload} type="button" className="bg-sky-700 flex flex-row items-center justify-center gap-1 px-2" onClick={submitUploadImg}><MdCloudUpload className="text-xl" />{!isLoadingUpload ? "Upload Image" : 'Uploading...'}</Button>
+                        <Button disabled={isSubmitting || isLoadingUpload} type="button" className="bg-sky-700 flex flex-row items-center justify-center gap-1 px-2" onClick={submitUploadImg}><MdCloudUpload className="text-xl" />{!isLoadingUpload ? "Upload Image" : 'Uploading...'}</Button>
                     </div>
-                    <div className="w-full">
-                        <ImageList imageList={imgUrls} deleteImgStorage={() => { }} />
+                    <div className="w-full flex flex-col gap-2">
+                        <ImageList imageList={watch("imgUrl")} deleteImgStorage={deleteImgStorage} pathName="imgUrl" setValue={setValue} />
+                        {errors.imgUrl?.message && watch("imgUrl").length < 3
+                            && <p className="text-rose-800 text-xs">{errors.imgUrl?.message}</p>}
                     </div>
                     <div className="w-full md:grid grid-cols-2 gap-4">
                         <div className="w-full col-span-1 flex flex-col gap-3 mb-4 md:m-0">
-                            <InputLabel disabled={isLoading} register={register} name="name" label="House Name" placeholder="House name" />
-                            <TextArea disabled={isLoading} register={register} name="description" label="Description" placeholder="Describe your house..." />
-
-                            <div className="bg-zinc-100 flex flex-col gap-2 p-4 rounded-[0.375rem]">
-                                <h3 className="font-semibold">Location</h3>
-                                <div className="pl-4 flex flex-col gap-2">
-                                    <InputLabel disabled={isLoading} register={register} name="address" label="Address" placeholder="Address" />
-                                    <div className="flex flex-row items-center justify-start gap-3">
-                                        <h3 className="text-sm">Latitude</h3>
-                                        <input {...register("location.latitude")} type="number" step="any" placeholder="10.123456" className="p-2 border border-black rounded-[0.375rem]" />
-                                        <h3 className="text-sm">Longitude</h3>
-                                        <input {...register("location.longitude")} type="number" step="any" placeholder="100.123456" className="p-2 border border-black rounded-[0.375rem]" />
-                                    </div>
-                                </div>
-                            </div>
+                            <InputLabel disabled={isSubmitting} register={register} message={errors.name?.message} name="name" label="House Name" placeholder="House name" />
+                            <TextArea disabled={isSubmitting} register={register} message={errors.description?.message} name="description" label="Description" placeholder="Describe your house..." />
                         </div>
                         <div className="w-full col-span-1 flex flex-col gap-4">
-                            <SelectForm disabled={isLoading} register={register} name="formType" label="Business Types" data={dataFormType} onChange={(e: ChangeEvent<HTMLSelectElement>) => { setFormTypeValue(e.currentTarget.value) }} />
-                            <div className="flex flex-row items-center justify-start gap-3 flex-wrap">
-                                <SelectForm disabled={isLoading} register={register} name="houseType" label="House Types" data={dataHouseType} />
+                            <SelectForm disabled={isSubmitting} register={register} message={errors.formType?.message} name="formType" label="Business Types" data={dataFormType} onChange={(e: ChangeEvent<HTMLSelectElement>) => { setFormTypeValue(e.currentTarget.value) }} />
+                            <SelectForm disabled={isSubmitting} register={register} message={errors.houseType?.message} name="houseType" label="House Types" data={dataHouseType} />
+                            <div className="flex flex-row flex-nowrap items-center justify-start gap-3">
                                 <div className="flex flex-row items-center gap-1 justify-start">
-                                    <InputLabel disabled={isLoading} register={register} name="squaremetre" width='w-[80px]' className="flex flex-row items-center justify-start" />
+                                    <InputLabel type="number" disabled={isSubmitting} register={register} valueAsNumber={true} message={errors.squaremetre?.message} name="squaremetre" label="Square feet:" width='w-[80px]' className="flex flex-row items-center justify-start" />
                                     <TbMeterSquare className="text-2xl" />
                                 </div>
-                                <InputLabel disabled={isLoading} register={register} name="bedrooms" label="Bedrooms:" width="w-[35px]" min={1} max={9} maxLength={1} className="flex flex-row items-center justify-start" />
-                                <InputLabel disabled={isLoading} register={register} name="bathrooms" label="Bathrooms:" width="w-[35px]" min={1} max={9} maxLength={1} className="flex flex-row items-center justify-start" />
+                                <InputLabel type="number" disabled={isSubmitting} register={register} valueAsNumber={true} message={errors.bedrooms?.message} name="bedrooms" label="Bedrooms:" width="w-[35px]" min={1} max={9} maxLength={1} className="flex flex-row items-center justify-start" />
+                                <InputLabel type="number" disabled={isSubmitting} register={register} valueAsNumber={true} message={errors.bathrooms?.message} name="bathrooms" label="Bathrooms:" width="w-[35px]" min={1} max={9} maxLength={1} className="flex flex-row items-center justify-start" />
                             </div>
-                            <div className="flex flex-row items-center justify-start gap-3">
-                                <Checkbox disabled={isLoading} register={register} name='furnished' label="Furnished" />
-                                <Checkbox disabled={isLoading} register={register} name='parking' label="Parking lot" />
-                                <Checkbox disabled={isLoading} register={register} name='offer' label="Offer" onChange={() => setValueOfferField(!valueOfferField)} />
+                            <div className="flex flex-col gap-1">
+                                <h3 className="text-sm ">Amenities of House</h3>
+                                <div className="flex flex-row items-center justify-start gap-3">
+                                    <Checkbox disabled={isSubmitting} register={register} message={errors.furnished?.message} name='furnished' label="Furnished" />
+                                    <Checkbox disabled={isSubmitting} register={register} message={errors.parking?.message} name='parking' label="Parking lot" />
+                                    <Checkbox disabled={isSubmitting} register={register} message={errors.offer?.message} name='offer' label="Offer" onChange={changeCheckedOffer} />
+                                </div>
+                                <FilterKeywords nameField="amenities" setValue={setValue} watch={watch} />
                             </div>
-                            <InputLabel disabled={isLoading} register={register} name="regularPrice" label="Regular Price" placeholder={`${formTypeValue === "Rent" ? "VND / month" : "VND"}`} />
-                            {valueOfferField && <InputLabel disabled={isLoading} register={register} name="discountPrice" label="Discount Price" placeholder={`${formTypeValue === "Rent" ? "VND / month" : "VND"}`} />}
+                            <InputCurrencyB name="regularPrice" label="Regular Price" register={register} setValue={setValue} message={errors.regularPrice?.message} />
+                            {valueOfferField
+                                && <InputCurrencyB name="discountPrice" label="Discount Price" register={register} setValue={setValue} message={errors.discountPrice?.message} placeholder={`${formTypeValue === "Rent" ? "VND / month" : "VND"}`} />}
                         </div>
                     </div>
-                    <Button disabled={isLoading} type="submit" className="bg-teal-700 w-full md:w-[50%] m-auto">{!isLoading ? "Create" : "Creating..."}</Button>
+                    <div className="bg-zinc-100 flex flex-col gap-2 p-4 rounded-[0.375rem]">
+                        <h3 className="font-semibold">Location</h3>
+                        <div className="pl-4 flex flex-col gap-2">
+                            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-center gap-5">
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.address?.number?.message} name="address.number" label="Number" placeholder="01" />
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.address?.street?.message} name="address.street" label="Street" placeholder="Đỗ Xuân Hợp" />
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.address?.ward?.message} name="address.ward" label="Ward" placeholder="Phước Long B" />
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.address?.district?.message} name="address.district" label="District" placeholder="TP.Thủ Đức" />
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.address?.city?.message} name="address.city" label="City" placeholder="Hồ Chí Minh" />
+                            </div>
+                            <div className=" flex flex-col gap-3">
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.location?.latitude?.message} name="location.latitude" label="Latitude" placeholder="10.123456" />
+                                <InputLabel disabled={isSubmitting} register={register} message={errors.location?.longitude?.message} name="location.longitude" label="Longitude" placeholder="100.123456" />
+                            </div>
+                        </div>
+                    </div>
+                    <Button disabled={isSubmitting} type="submit" className="bg-teal-700 w-full md:w-[50%] m-auto">{!isSubmitting ? "Create" : "Creating..."}</Button>
                 </form>
             </div >
         </div >

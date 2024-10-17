@@ -1,14 +1,18 @@
-import { RegisterFormSchema } from "@/form_schema/FormSchema"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from '@/components/ui/button'
-import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
-import { useNavigate } from "react-router-dom"
+import { RegisterFormSchema } from "@/form_schema/FormSchema"
+
+import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from "@/components/ui/form"
+
+import { Input } from "@/components/ui/input"
+import { Button } from '@/components/ui/button'
+
 
 
 type RegisterFormType = z.infer<typeof RegisterFormSchema>
@@ -28,7 +32,6 @@ const RegisterForm = () => {
         }
     })
     const submitRegister = async (data: RegisterFormType) => {
-        console.log(data);
         try {
             setIsLoading(true)
             const res = await fetch(`/api/auth/register`, {
@@ -85,7 +88,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type='text' className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="Lê Hữu Tuân" {...field} />
                             </FormControl>
-                            <FormMessage className="text-red-400 text-sm" />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -98,7 +101,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type="email" className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="abc@gmail.com" {...field} />
                             </FormControl>
-                            <FormMessage className="text-red-400 text-sm" />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -111,7 +114,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type="password" className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="••••••••" {...field} />
                             </FormControl>
-                            <FormMessage className="text-red-400 text-sm" />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -124,7 +127,7 @@ const RegisterForm = () => {
                             <FormControl>
                                 <Input type="password" className="w-full outline-1 bg-white rounded-[0.375rem] placeholder:text-zinc-400" placeholder="••••••••" {...field} />
                             </FormControl>
-                            <FormMessage className="text-red-400 text-sm" />
+                            <FormMessage className="text-rose-800 text-xs" />
                         </FormItem>
                     )}
                 />

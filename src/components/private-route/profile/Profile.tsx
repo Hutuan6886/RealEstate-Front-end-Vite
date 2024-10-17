@@ -1,30 +1,22 @@
-
-
-import {
-    useEffect,
-    useRef,
-    useState
-} from "react";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
-import { app } from "@/firebase";
-import { Button } from "@/components/ui/button";
-import {
-    useDispatch,
-    useSelector,
-
-} from "react-redux";
-import { RootState } from "@/redux/store";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
-import { RiProfileLine } from "react-icons/ri";
-import { BiSolidDashboard } from "react-icons/bi";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
-import { IoTrash } from "react-icons/io5";
+import { RootState } from "@/redux/store";
+import { app } from "@/firebase";
+import { closeDeleteUserModal, deleteUserFailure, deleteUserLoading, deleteUserSuccess, openDeleteUserModal } from "@/features/user/userSlice";
+
 import CredentialsProfile from "./CredentialsProfile";
 import OauthProfile from "./OauthProfile";
 import ModalDelete from "@/components/modal/ModalDelete"
-import { closeDeleteUserModal, deleteFailure, deleteLoading, deleteSuccess, openDeleteUserModal } from "@/features/user/userSlice";
-import { toast } from "@/components/ui/use-toast";
+
+import { Button } from "@/components/ui/button";
 import { ToastAction } from "@/components/ui/toast";
+import { toast } from "@/components/ui/use-toast";
+
+import { BiSolidDashboard } from "react-icons/bi";
+import { IoTrash } from "react-icons/io5";
 
 //todo: UPLOAD IMAGE
 //todo: Sử dụng useRef để lấy giá trị của <input type="file" onChange={(e)=>setImageUpload(e....)} ref={fileRef}> thông qua <img onClick={fileRef...}> ---> giá trị onchange của <input type="file"> được save tại imgUpload state là typeof File ---> truyền imgUpload và handleImageUpload(imgUpload:File) function để push img to firebase storage ---> Sau khi POST image request to firebase storage, firebase sẽ trả về response 1 imgUrl typeof string ---> sử dụng imgUrl để hiển thị ---> POST request to DB ---> lưu imgUrl vào user info ở redux
@@ -82,7 +74,7 @@ const Profile = () => {
 
     const deleteUser = async (userId: string) => {
         try {
-            dispatch(deleteLoading())
+            dispatch(deleteUserLoading())
             const res = await fetch(`/api/user/delete/${userId}`, {
                 method: 'delete',
                 headers: {
@@ -92,7 +84,7 @@ const Profile = () => {
             })
             const { message } = await res.json()
             if (res.ok) {
-                dispatch(deleteSuccess())
+                dispatch(deleteUserSuccess())
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: message
@@ -103,7 +95,7 @@ const Profile = () => {
                     className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
                     description: message
                 })
-                dispatch(deleteFailure())
+                dispatch(deleteUserFailure())
             }
         } catch (error) {
             toast({
@@ -113,7 +105,7 @@ const Profile = () => {
                 description: "There was a problem with your request.",
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
-            dispatch(deleteFailure())
+            dispatch(deleteUserFailure())
         }
     }
 
@@ -132,8 +124,6 @@ const Profile = () => {
                         <img className="rounded-[50px] border-2 size-24 m-auto cursor-pointer" onClick={() => fileRef.current?.click()} src={imgFirebaseUrl ? imgFirebaseUrl as string : currentUser.imgUrl as string} alt="avatar" />
                         <div className="m-auto flex flex-col gap-4">
                             <Link to="/management" className="flex flex-row items-center justify-start gap-4"><BiSolidDashboard size={22} /> Product Management</Link>
-                            <Link to="/profile" className="flex flex-row items-center justify-start gap-4"><RiProfileLine size={22} /> User Information </Link>
-
                         </div>
                     </div>
                 </div>

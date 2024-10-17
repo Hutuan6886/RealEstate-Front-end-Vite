@@ -1,27 +1,26 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    // DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { logoutFailure, logoutLoading, logoutSuccess } from "@/features/user/userSlice";
-import { FiEdit, FiLogOut } from "react-icons/fi";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useNavigate } from "react-router-dom";
+
+import { logoutUserFailure, logoutUserLoading, logoutUserSuccess } from "@/features/user/userSlice";
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ToastAction } from "@/components/ui/toast";
-import { FaRegUser } from "react-icons/fa";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { toast } from "@/components/ui/use-toast";
+
+import { FiEdit, FiLogOut } from "react-icons/fi";
 
 const AvatarNav = () => {
+    const navigate = useNavigate()
+
+    const { currentUser } = useSelector((state: RootState) => state.user)
     const dispatch = useDispatch()
 
     const logout = async () => {
         //todo: Để thực hiện logout function: Post api logout -> tại api thực hiện clearCookie access_token. Tại front-end thực hiện update currentUser thành user rỗng 
         try {
-            dispatch(logoutLoading())
+            dispatch(logoutUserLoading())
             const res = await fetch('/api/auth/logout', {
                 method: 'post', cache: 'no-cache',
                 headers: {
@@ -30,7 +29,7 @@ const AvatarNav = () => {
             })
             const { message } = await res.json()
             if (res.ok) {
-                dispatch(logoutSuccess())
+                dispatch(logoutUserSuccess())
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: message
@@ -41,7 +40,7 @@ const AvatarNav = () => {
                     className: 'bg-red-600 border-0 text-white rounded-[0.375rem]',
                     description: message
                 })
-                dispatch(logoutFailure())
+                dispatch(logoutUserFailure())
             }
         } catch (error) {
             toast({
@@ -51,7 +50,7 @@ const AvatarNav = () => {
                 description: "There was a problem with your request.",
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
-            dispatch(logoutFailure())
+            dispatch(logoutUserFailure())
         }
     }
 
@@ -60,16 +59,35 @@ const AvatarNav = () => {
         <DropdownMenu>
             <DropdownMenuTrigger asChild >
                 <Avatar className="cursor-pointer">
-                    <AvatarImage src="https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png" />
+                    <AvatarImage src={`${currentUser.imgUrl ? currentUser.imgUrl : "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png"}`} alt={`${currentUser.imgUrl ? currentUser.imgUrl : "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png"}`} />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-50 bg-white rounded-[0.375rem]">
-                <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                <hr />
-                <DropdownMenuItem className="p-0"><Link to="/management" className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2 "><div className="p-2 border border-black rounded-[25px]"><FiEdit /></div>Management Product</Link></DropdownMenuItem>
-                <DropdownMenuItem className="p-0"><Link to="/profile" className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2"><div className="p-2 border border-black rounded-[25px]"><FaRegUser /></div>User Information</Link></DropdownMenuItem>
-                <DropdownMenuItem className=" p-0"><Link className="w-full flex flex-row justify-start items-center gap-2 font-semibold rounded-[0.375rem] hover:bg-zinc-200 text-black transition p-2" to="" onClick={logout}><div className="p-2 border border-black rounded-[25px]"><FiLogOut /></div>Log out </Link></DropdownMenuItem>
+                <DropdownMenuItem className="p-0" onClick={() => navigate('/profile')}>
+                    <div className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] cursor-pointer text-black p-2 hover:bg-zinc-200 transition">
+                        <div className="p-2 border border-black rounded-[25px]">
+                            <img src={`${currentUser.imgUrl ? currentUser.imgUrl : "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png"}`} alt={`${currentUser.imgUrl ? currentUser.imgUrl : "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png"}`} className="w-4" />
+                        </div>
+                        {currentUser.userName}
+                    </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="p-0" onClick={() => navigate('/management')}>
+                    <div className="w-full flex flex-row justify-start items-center gap-2 rounded-[0.375rem] cursor-pointer hover:bg-zinc-200 text-black transition p-2 ">
+                        <div className="p-2 border border-black rounded-[25px]">
+                            <FiEdit className="w-4" />
+                        </div>
+                        Management Product
+                    </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem className=" p-0" onClick={logout}>
+                    <div className="w-full flex flex-row justify-start items-center gap-2 font-semibold rounded-[0.375rem] cursor-pointer hover:bg-zinc-200 text-black transition p-2">
+                        <div className="p-2 border border-black rounded-[25px]">
+                            <FiLogOut className="w-4" />
+                        </div>
+                        Log out
+                    </div>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu >
     )

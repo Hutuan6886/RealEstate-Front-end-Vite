@@ -21,7 +21,7 @@ const Navbar = () => {
   const { currentUser } = useSelector((state: RootState) => state.user)
 
   return (
-    <nav className="relative w-full py-3">
+    <nav className="relative w-full bg-white py-3">
       <div className="flex flex-row justify-between items-center gap-3">
         <div className="flex flex-row items-center justify-start gap-5">
           <Link to="/" className="text-bold text-2xl md:text-3xl">

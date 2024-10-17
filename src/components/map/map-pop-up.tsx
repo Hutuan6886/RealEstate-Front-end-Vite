@@ -1,8 +1,9 @@
-import { HomeType } from "@/types/types"
-import HomeItem from "../newly/HomeItem"
+import { ListingReduxType } from "@/types/types"
+
+import HomeItem from "@/components/home-listing-list/HomeItem"
 
 interface MapPopUpProps {
-  homeItem: HomeType
+  homeItem: ListingReduxType
 }
 const MapPopUp: React.FC<MapPopUpProps> = ({ homeItem }) => {
   if (!homeItem) {

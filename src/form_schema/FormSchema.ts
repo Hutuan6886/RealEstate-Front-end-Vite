@@ -40,10 +40,10 @@ export const RegisterFormSchema = z
 
 export const LoginFormSchema = z.object({
   email: z.string().email({
-    message: "Email is invalid",
+    message: "Email is invalid!",
   }),
   password: z.string().regex(passwordValidation, {
-    message: "The password is not valid",
+    message: "The password is not valid!",
   }),
 });
 
@@ -63,16 +63,9 @@ export const ProfileForm = z
     email: z.string().email({
       message: "The email is invalid!",
     }),
-    currentPassword: z
-      .string()
-      .min(8, {
-        message:
-          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
-      })
-      .regex(passwordValidation, {
-        message:
-          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
-      }),
+    currentPassword: z.string().min(8, {
+      message: "The password is required!",
+    }),
     newPassword: z
       .optional(
         z
@@ -112,3 +105,61 @@ export const ProfileOauthForm = z.object({
   birthday: z.string().optional(),
   address: z.string().optional(),
 });
+
+export const ManageListingFormSchema = z
+  .object({
+    id: z.string().optional(),
+    imgUrl: z
+      .array(z.string())
+      .min(3, { message: "Click upload, Image must be at least 3 pictures!" }),
+    name: z.string().min(1, { message: "Name is required!" }),
+    description: z.string().min(1, { message: "Description is required!" }),
+    address: z.object({
+      number: z.string().min(1, { message: "Number is required!" }),
+      street: z.string().min(1, { message: "Street is required!" }),
+      ward: z.string().min(1, { message: "Ward is required!" }),
+      district: z.string().min(1, { message: "District is required!" }),
+      city: z.string().min(1, { message: "City is required!" }),
+    }),
+    location: z.object({
+      latitude: z.string().min(1, { message: "Latitude is required!" }),
+      longitude: z.string().min(1, { message: "Longitude is required!" }),
+    }),
+    formType: z.enum(["Sell", "Rent"], {
+      message: "Select a form for your home!",
+    }),
+    houseType: z.string().min(1, {
+      message: "Select a type for your home!",
+    }),
+    furnished: z.boolean().optional(),
+    parking: z.boolean().optional(),
+    offer: z.boolean().optional(),
+    amenities: z.array(z.string()).optional(),
+    squaremetre: z.number().positive({ message: "Bedrooms is invalid!" }),
+    bedrooms: z
+      .number()
+      .int({ message: "This is a integer number!" })
+      .positive({ message: "Bedrooms is invalid!" }),
+    bathrooms: z
+      .number()
+      .int({ message: "This is a integer number!" })
+      .positive({ message: "Bathrooms is invalid!" }),
+    regularPrice: z.string(),
+    discountPrice: z.string().optional(),
+  })
+  .refine(
+    (value) => {
+      if (value.discountPrice) {
+        //todo: Convert regularPrice, discounPrice are string value with dot to raw number value
+
+        return (
+          Number(value.discountPrice.split(".").join("")) <=
+          Number(value.regularPrice.split(".").join(""))
+        );
+      }
+    },
+    {
+      message: "Discount price can't be more than regular price!",
+      path: ["discountPrice"],
+    }
+  );

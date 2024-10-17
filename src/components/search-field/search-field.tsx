@@ -1,14 +1,17 @@
-import { z } from "zod";
-import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import { SearchFormSchema } from "@/form_schema/FormSchema";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Button } from "../ui/button";
+import { z } from "zod";
+
+import { cn } from "@/lib/utils";
+import { cityData, provinceData, LocationType } from "@/data/location";
+import { SearchFormSchema } from "@/form_schema/FormSchema";
+
+import { Button } from "@/components/ui/button";
+
 import { IoSearchSharp } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { FaLocationDot } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
-import { cityData, provinceData, LocationType } from "@/data/location";
 
 
 export type SearchFormType = z.infer<typeof SearchFormSchema>
@@ -23,7 +26,9 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     const [suggestionVillageName, setSuggestionVillageName] = useState<string[]>([])
     const [openSearchSuggest, setOpenSearchSuggest] = useState<boolean>(false)
     const [listingNameData, setListingNameData] = useState<string[]>()
+
     const searchRef = useRef<HTMLFormElement>(null)
+
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -36,26 +41,26 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     })
     const searchValue = watch("search")
 
-    const clickSearch = (searchTerm: string, lat: number, lng: number) => {
-        const urlParams = new URLSearchParams(window.location.search)
+    const clickSearch = (searchTerm: string, lat?: number, lng?: number) => {
+        const urlParams = new URLSearchParams(location.search)
         urlParams.set("searchTerm", searchTerm)
-        urlParams.set("lat", lat.toString())
-        urlParams.set("lng", lng.toString())
+        if (lat && lng) {
+            urlParams.set("lat", lat.toString())
+            urlParams.set("lng", lng.toString())
+        }
         const searchQuery = urlParams.toString()
         navigate(`/search?${searchQuery}`)
-        window.location.reload()
     }
 
     const submitSearch: SubmitHandler<SearchFormType> = (data) => {
         const findata = [...provinceData, ...cityData].find((item) => item.name.includes(data.search));
-        const urlParams = new URLSearchParams(window.location.search)
+        const urlParams = new URLSearchParams(location.search)
         urlParams.set("searchTerm", data.search)
         urlParams.set("lat", findata?.position.latitude.toString() as string)
         urlParams.set("lng", findata?.position.longitude.toString() as string)
         const searchQuery = urlParams.toString()
 
         navigate(`/search?${searchQuery}`)
-        window.location.reload()
     }
 
     useEffect(() => {
@@ -113,7 +118,6 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
         }
     }, [location.search, setValue])
 
-
     return (
         <form className={cn("w-[60%] h-fit m-auto", className)} onSubmit={handleSubmit(submitSearch)} ref={searchRef}>
             <div className="relative w-full h-fit flex flex-col rounded-[0.375rem]">
@@ -121,7 +125,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
                     <div className="w-full h-[50px] rounded-tl-[0.375rem] relative">
                         <input {...register("search", {
                             required: true
-                        })} type="text" placeholder={placeholder} className="w-full h-[50px] rounded-tl-[0.375rem] rounded-bl-[0.375rem] focus:outline-none p-3 bg-slate-100"
+                        })} type="text" placeholder={placeholder} className="w-full h-[50px] rounded-tl-[0.375rem] rounded-bl-[0.375rem] focus:outline-none p-3 bg-slate-100 placeholder:text-xs placeholder:sm:text-sm"
                             onClick={() => { setOpenSearchSuggest(true) }}
                         />
                         {watch('search') && <IoIosCloseCircle className="absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer text-zinc-300 hover:text-zinc-400 transition" onClick={() => resetField("search")} />}
@@ -135,7 +139,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
                 {openSearchSuggest &&
                     <div className={`absolute top-[50px] left-0 w-full h-fit max-h-[300px] overflow-y-scroll bg-white rounded-b-[0.375rem] border-2`}>
                         <div className=" flex flex-col p-1">
-                            {/* {suggestionVillageName.length ?
+                            {suggestionVillageName.length ?
                                 <>
                                     <h3 className="text-teal-700 font-semibold">Resident Area</h3>
                                     <div className="flex flex-col gap-1">{suggestionVillageName.map((name, i) => (
@@ -146,7 +150,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
                                                 <span className="text-xs text-zinc-500">Resident</span>
                                             </div>
                                         </div>
-                                    ))}</div></> : null} */}
+                                    ))}</div></> : null}
                         </div>
                         <div className=" flex flex-col p-1">
                             <h3 className="text-teal-700 font-semibold">Places</h3>

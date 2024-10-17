@@ -1,25 +1,25 @@
 import { MouseEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    useDispatch,
-    useSelector
-} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
+import { RootState } from "@/redux/store";
 import { formatter } from "@/lib/utils"
-import { HomeType } from "@/types/types";
+import { ListingReduxType } from "@/types/types";
+import { saveAndUnsaveListing } from "@/features/user/userSlice";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import DropdownHomeItem from "./dropdown-homeitem";
+import SaleTagIcon from "./SaleTagIcon";
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 import { BiSolidBath } from "react-icons/bi"
 import { RiBuilding3Fill } from "react-icons/ri"
 import { FaCaretLeft, FaCaretRight, FaHeart, FaHouseUser, FaRegHeart } from "react-icons/fa6";
 import { IoBed } from "react-icons/io5"
 import { HiDotsHorizontal } from "react-icons/hi";
-import DropdownHomeItem from "./dropdown-homeitem";
-import { RootState } from "@/redux/store";
-import { saveAndUnsaveListing } from "@/features/user/userSlice";
 
 interface HomeItemProps {
-    homeItemData: HomeType
+    homeItemData: ListingReduxType
     isSearchItem?: boolean
 }
 
@@ -51,7 +51,7 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
         }
     }
 
-    const savedHomes = async (userId: string, homeData?: HomeType) => {
+    const savedHomes = async (userId: string, homeData?: ListingReduxType) => {
         try {
             if (!userId) {
                 navigate("/log-in")
@@ -68,18 +68,18 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
                 })
                 if (res.ok) {
                     const homeId = await res.json()
-
                     dispatch(saveAndUnsaveListing(homeId as string))
                 }
             }
         } catch (error) {
             console.log("Saved-Homes", error);
-
         }
     }
 
     return (
-        <div className={`${isSearchItem ? "w-full" : "w-fit"}  h-full`}>
+        <div className={`relative ${isSearchItem ? "w-full" : "w-fit"} h-full`}>
+            {homeItemData.discountPrice && homeItemData.discountPrice > 0
+                && <SaleTagIcon className="absolute z-10 top-0 left-0" />}
             <div className="flex flex-col items-start gap-2 overflow-hidden">
                 <div className={`${isSearchItem ? "w-full h-[240px]" : "w-[240px] h-[150px]"}  relative rounded-[0.45rem] cursor-pointer overflow-hidden`}
                     onMouseMove={(e: MouseEvent) => {
@@ -121,7 +121,9 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
                                 <div className="cursor-pointer text-xl"><HiDotsHorizontal /></div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-fit bg-white rounded-[0.375rem]">
-                                <DropdownHomeItem homeData={homeItemData} savedHomes={() => savedHomes(currentUser.id, homeItemData)} />
+                                <DropdownMenuItem className="w-full p-0">
+                                    <DropdownHomeItem homeData={homeItemData} savedHomes={() => savedHomes(currentUser.id, homeItemData)} />
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -130,7 +132,7 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
                         <div className="flex flex-row items-center justify-start gap-0.5"><BiSolidBath className="text-zinc-500" />{homeItemData.bathrooms}</div>
                         <div className="flex flex-row items-center justify-start gap-0.5"><RiBuilding3Fill className="text-zinc-500" />{homeItemData.squaremetre} sqft</div>
                     </div>
-                    <p className={`${isSearchItem ? "max-w-[90%]" : "max-w-[240px]"} text-zinc-700`}>{homeItemData.name && <span className="text-zinc-900 font-semibold">{homeItemData.name} -</span>} {homeItemData.address}</p>
+                    <p className={`${isSearchItem ? "max-w-[90%]" : "max-w-[240px]"} text-zinc-700`}>{homeItemData.name && <span className="text-zinc-900 font-semibold">{homeItemData.name} -</span>} <span>{homeItemData.address.number}</span> <span>{homeItemData.address.street}</span>, <span>{homeItemData.address.ward}</span>, <span>{homeItemData.address.district}</span>, <span>{homeItemData.address.city}</span></p>
                 </div>
             </div>
         </div >

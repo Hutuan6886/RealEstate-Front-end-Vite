@@ -18,7 +18,6 @@ const MainNav: React.FC<MainNavProps> = ({ className }) => {
             {dataNav.map((data, i) => {
                 return <div key={i} onClick={() => {
                     navigate(data.href)
-                    window.location.reload()
                 }}><Button className="font-semibold lg:font-normal" variant='nav'>{data.label}</Button></div>
             })}
         </div >

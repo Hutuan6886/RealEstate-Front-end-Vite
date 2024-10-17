@@ -5,11 +5,12 @@ import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from "rea
 
 type FilterSelectCheckFieldProps<T extends FieldValues> = {
     nameField: Path<T>
+    title?: string
     setValue: UseFormSetValue<T>
     watch: UseFormWatch<T>
 }
 
-const FilterSelectCheckField = <T extends FieldValues>({ nameField, setValue, watch }: FilterSelectCheckFieldProps<T>) => {
+const FilterSelectCheckField = <T extends FieldValues>({ nameField, title, setValue, watch }: FilterSelectCheckFieldProps<T>) => {
     const [selectedValue, setSelectedValue] = useState<string[]>(watch(nameField))
 
     const handleSelectedCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -26,13 +27,16 @@ const FilterSelectCheckField = <T extends FieldValues>({ nameField, setValue, wa
     }, [nameField, selectedValue, setValue])
 
     return (
-        <div className="w-fit">
-            <div className="flex flex-col">
-                {dataHouseType.map((houseType, i) => (
-                    <div key={i}>
-                        <Selectcheck label={houseType.label} value={houseType.value} onChange={handleSelectedCheckbox} checked={selectedValue.includes(houseType.value)} />
-                    </div>
-                ))}
+        <div className="w-full">
+            <div className="flex flex-col items-start gap-2">
+                <h3 className="text-zinc-500">{title}</h3>
+                <div className="flex flex-col">
+                    {dataHouseType.map((houseType, i) => (
+                        <div key={i}>
+                            <Selectcheck label={houseType.label} value={houseType.value} onChange={handleSelectedCheckbox} checked={selectedValue.includes(houseType.value)} />
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

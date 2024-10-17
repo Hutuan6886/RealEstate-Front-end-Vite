@@ -1,20 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-export type UserReduxType = {
-  id: string;
-  userName: string;
-  email: string;
-  imgUrl: string;
-  phone: string;
-  address: string;
-  birthday: string;
-  gender: string;
-  emailVerified: string;
-  savedHomes: string[];
-  provider: string;
-  createAt: string;
-  updateAt: string;
-};
+import { ListingReduxType, UserReduxType } from "@/types/types";
+
 export interface UserState {
   currentUser: UserReduxType;
   isLoading: boolean;
@@ -32,6 +19,7 @@ const initialState: UserState = {
     gender: "",
     emailVerified: "",
     savedHomes: [],
+    listing: [],
     provider: "",
     createAt: "",
     updateAt: "",
@@ -44,36 +32,65 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    loginLoading: (state) => {
+    //todo: Login User
+    loginUserLoading: (state) => {
       state.isLoading = true;
     },
-    loginSuccess: (state, action: PayloadAction<UserReduxType>) => {
+    loginUserSuccess: (state, action: PayloadAction<UserReduxType>) => {
       state.currentUser = action.payload;
       state.isLoading = false;
     },
-    loginFailure: (state) => {
+    loginUserFailure: (state) => {
       state.isLoading = false;
     },
-    updateLoading: (state) => {
+    //todo: Logout User
+    logoutUserLoading: (state) => {
       state.isLoading = true;
     },
-    updateSuccess: (state, action: PayloadAction<UserReduxType>) => {
+    logoutUserSuccess: (state) => {
+      state.isLoading = false;
+      state.currentUser = {
+        id: "",
+        userName: "",
+        email: "",
+        imgUrl: "",
+        phone: "",
+        address: "",
+        birthday: "",
+        gender: "",
+        emailVerified: "",
+        savedHomes: [],
+        listing: [],
+        provider: "",
+        createAt: "",
+        updateAt: "",
+      };
+    },
+    logoutUserFailure: (state) => {
+      state.isLoading = false;
+    },
+    //todo Update User Profile
+    updateUserLoading: (state) => {
+      state.isLoading = true;
+    },
+    updateUserSuccess: (state, action: PayloadAction<UserReduxType>) => {
       state.currentUser = action.payload;
       state.isLoading = false;
     },
-    updateFailure: (state) => {
+    updateUserFailure: (state) => {
       state.isLoading = false;
     },
+    //todo: Delete User
     openDeleteUserModal: (state) => {
       state.isOpenModal = true;
     },
     closeDeleteUserModal: (state) => {
       state.isOpenModal = false;
     },
-    deleteLoading: (state) => {
+    deleteUserLoading: (state) => {
       state.isLoading = true;
     },
-    deleteSuccess: (state) => {
+    deleteUserSuccess: (state) => {
       state.isLoading = false;
       state.currentUser = {
         id: "",
@@ -86,40 +103,18 @@ export const userSlice = createSlice({
         gender: "",
         emailVerified: "",
         savedHomes: [],
+        listing: [],
         provider: "",
         createAt: "",
         updateAt: "",
       };
       state.isOpenModal = false;
     },
-    deleteFailure: (state) => {
+    deleteUserFailure: (state) => {
       state.isLoading = false;
       state.isOpenModal = false;
     },
-    logoutLoading: (state) => {
-      state.isLoading = true;
-    },
-    logoutSuccess: (state) => {
-      state.isLoading = false;
-      state.currentUser = {
-        id: "",
-        userName: "",
-        email: "",
-        imgUrl: "",
-        phone: "",
-        address: "",
-        birthday: "",
-        gender: "",
-        emailVerified: "",
-        savedHomes: [],
-        provider: "",
-        createAt: "",
-        updateAt: "",
-      };
-    },
-    logoutFailure: (state) => {
-      state.isLoading = false;
-    },
+    //todo: Save or unsave save listing
     saveAndUnsaveListing: (state, action: PayloadAction<string>) => {
       const listingExisting = state.currentUser.savedHomes.findIndex(
         (item) => item === action.payload
@@ -135,25 +130,54 @@ export const userSlice = createSlice({
         ];
       }
     },
+    //todo: User create, update and delete listing of user
+    addListing: (state, action: PayloadAction<ListingReduxType>) => {
+      state.currentUser.listing = [
+        ...state.currentUser.listing,
+        action.payload,
+      ];
+    },
+    updateListing: (state, action: PayloadAction<ListingReduxType>) => {
+      const index = state.currentUser.listing.findIndex(
+        (listing) => listing.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.currentUser.listing.splice(index, 1);
+        state.currentUser.listing = [
+          ...state.currentUser.listing,
+          action.payload,
+        ];
+      }
+    },
+    deleteListing: (state, action: PayloadAction<ListingReduxType>) => {
+      state.currentUser.listing = [
+        ...state.currentUser.listing.filter(
+          (listing) => listing.id !== action.payload.id
+        ),
+      ];
+    },
   },
 });
 
 export const {
-  loginSuccess,
-  loginLoading,
-  loginFailure,
-  updateLoading,
-  updateSuccess,
-  updateFailure,
+  loginUserSuccess,
+  loginUserLoading,
+  loginUserFailure,
+  logoutUserLoading,
+  logoutUserSuccess,
+  logoutUserFailure,
+  updateUserLoading,
+  updateUserSuccess,
+  updateUserFailure,
   openDeleteUserModal,
   closeDeleteUserModal,
-  deleteLoading,
-  deleteSuccess,
-  deleteFailure,
-  logoutLoading,
-  logoutSuccess,
-  logoutFailure,
+  deleteUserLoading,
+  deleteUserSuccess,
+  deleteUserFailure,
   saveAndUnsaveListing,
+  addListing,
+  updateListing,
+  deleteListing,
 } = userSlice.actions;
 
 export default userSlice.reducer;

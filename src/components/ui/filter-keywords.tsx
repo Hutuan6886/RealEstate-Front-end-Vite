@@ -4,12 +4,13 @@ import { IoClose } from "react-icons/io5"
 import { FieldValues, Path, PathValue, UseFormSetValue, UseFormWatch } from "react-hook-form"
 
 type FilterKeywordsProps<T extends FieldValues> = {
+    label?: string
     nameField: Path<T>
     setValue: UseFormSetValue<T>
     watch: UseFormWatch<T>
 }
 
-const FilterKeywords = <T extends FieldValues>({ nameField, setValue, watch }: FilterKeywordsProps<T>) => {
+const FilterKeywords = <T extends FieldValues>({ label, nameField, setValue, watch }: FilterKeywordsProps<T>) => {
     const [inputValue, setInputValue] = useState<string>("")
 
     const handleKeywords = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,9 +29,9 @@ const FilterKeywords = <T extends FieldValues>({ nameField, setValue, watch }: F
     }
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full">
             <div className="flex flex-col gap-2">
-                <h3 className="text-zinc-500">Key Words</h3>
+                <h3 className="text-zinc-500">{label}</h3>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row justify-start items-center gap-2">
                         <input value={inputValue} type="text" className="w-full p-2 border border-zinc-700 rounded-[0.375rem]" placeholder="e.g. Pool, Parking..." onChange={handleKeywords} />

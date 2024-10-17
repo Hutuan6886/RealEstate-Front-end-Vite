@@ -1,18 +1,17 @@
-import {
-    GoogleAuthProvider, getAuth, signInWithPopup,
-    // signInWithRedirect 
-
-} from "firebase/auth"
 import { useDispatch, useSelector } from "react-redux"
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { FaGithub } from "react-icons/fa"
-import { FcGoogle } from "react-icons/fc"
+
 import { app } from "@/firebase"
-import { loginSuccess } from "@/features/user/userSlice"
 import { RootState } from "@/redux/store"
-import { toast } from "@/components/ui/use-toast"
+import { loginUserSuccess } from "@/features/user/userSlice"
+
 import { ToastAction } from "@/components/ui/toast"
+import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/use-toast"
+
+import { FcGoogle } from "react-icons/fc"
+import { FaGithub } from "react-icons/fa"
 
 
 const Oauth = () => {
@@ -31,7 +30,6 @@ const Oauth = () => {
             provider: result.providerId && "oauth",
             emailVerified: result.user.emailVerified ? new Date() : null,
         }
-        console.log('Data google user', result);
         try {
             const res = await fetch('/api/auth/google', {
                 method: 'post',
@@ -44,8 +42,7 @@ const Oauth = () => {
             if (res.ok) {
                 //todo: res trả về user sau khi log in thành công
                 const dataUser = await res.json();
-                console.log('Data google data user', dataUser);
-                dispatch(loginSuccess(dataUser))
+                dispatch(loginUserSuccess(dataUser))
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Log in user is successfully."

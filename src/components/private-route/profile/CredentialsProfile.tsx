@@ -1,14 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
-import { updateFailure, updateLoading, updateSuccess } from "@/features/user/userSlice";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 import { ProfileForm } from "@/form_schema/FormSchema";
+import { updateUserFailure, updateUserLoading, updateUserSuccess } from "@/features/user/userSlice";
+import { RootState } from "@/redux/store";
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
@@ -45,7 +46,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
         data = { ...data, imgUrl: imgFirebaseUrl || currentUser.imgUrl }
         console.log(data);
         try {
-            dispatch(updateLoading())
+            dispatch(updateUserLoading())
             const res = await fetch(`/api/user/update/${currentUser.id}`, {
                 method: 'post',
                 headers: {
@@ -56,7 +57,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
             if (res.ok) {
                 const dataUser = await res.json();
                 console.log("Data user is updated", dataUser);
-                dispatch(updateSuccess(dataUser))
+                dispatch(updateUserSuccess(dataUser))
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Update user is successfully."
@@ -85,7 +86,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
         } finally {
-            dispatch(updateFailure())
+            dispatch(updateUserFailure())
         }
     }
 
@@ -104,7 +105,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="text" placeholder="Lê Hữu Tuân" {...field} />
                                     </FormControl>
-                                    <FormMessage className="text-sm text-red-600" />
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -118,7 +119,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="email" placeholder="tuan@gmail.com" {...field} />
                                     </FormControl>
-                                    <FormMessage className="text-sm text-red-600" />
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -132,7 +133,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="number" placeholder="0353••••••" {...field} />
                                     </FormControl>
-                                    <FormMessage className="text-sm text-red-600" />
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -154,7 +155,6 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                             <SelectItem value="Female">Female</SelectItem>
                                         </SelectContent>
                                     </Select>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -197,7 +197,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="password" placeholder="••••••••" {...field} />
                                     </FormControl>
-                                    <FormMessage className="text-sm text-red-600" />
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -211,8 +211,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="password" placeholder="••••••••" {...field} />
                                     </FormControl >
-                                    <FormMessage className="text-sm text-red-600" />
-                                    <FormDescription></FormDescription>
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -226,7 +225,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
                                         <Input type="password" placeholder="••••••••" {...field} />
                                     </FormControl>
-                                    <FormMessage className="text-sm text-red-600" />
+                                    <FormMessage className="text-rose-800 text-xs" />
                                 </FormItem>
                             )}
                         />

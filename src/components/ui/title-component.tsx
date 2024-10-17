@@ -2,7 +2,7 @@ import React from 'react'
 
 interface TitleComponentProps {
   children: React.ReactNode
-  title: string
+  title?: string
   description?: string
 }
 const TitleComponent: React.FC<TitleComponentProps> = ({ children, title, description }) => {

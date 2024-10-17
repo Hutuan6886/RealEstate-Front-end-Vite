@@ -1,39 +1,37 @@
-import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
+import { useSelector } from "react-redux"
+import { useForm } from "react-hook-form"
+import { Link, useParams } from "react-router-dom"
+
+import { RootState } from "@/redux/store"
+import { LandlordType, ListingReduxType, RequestInfoFormType } from "@/types/types"
+
 import RequestInfoInput from "./RequestInfoInput"
 import RequestInfoTextArea from "./RequestInfoTextArea"
+import { Button } from "@/components/ui/button"
+
 import { IoClose } from "react-icons/io5"
-import { Link, useParams } from "react-router-dom"
-import { LandlordType, RequestInfoFormType } from "@/types/types"
-import { useSelector } from "react-redux"
-import { RootState } from "@/redux/store"
-import {
-    useForm,
-    // SubmitHandler
-} from "react-hook-form"
 
 interface RequestInfoFormProps {
     label?: string
-    address?: string
+    dataListing: ListingReduxType
     onClose?: () => void
 }
 
-const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, address, onClose }) => {
+const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, dataListing, onClose }) => {
     const checkBoxRef = useRef<HTMLInputElement>(null)
     const { listingId } = useParams()
     const [infoLandlord, setInfoLandlord] = useState<LandlordType>()
 
     const currentUser = useSelector((state: RootState) => state.user.currentUser)
 
-    const { register,
-        // handleSubmit, 
-        getValues } = useForm<RequestInfoFormType>({
-            defaultValues: {
-                phone: currentUser ? currentUser.phone : undefined,
-                email: currentUser ? currentUser.email : undefined,
-                message: `I am interested in ${address}`
-            }
-        })
+    const { register, getValues } = useForm<RequestInfoFormType>({
+        defaultValues: {
+            phone: currentUser ? currentUser.phone : undefined,
+            email: currentUser ? currentUser.email : undefined,
+            message: `I am interested in ${dataListing.address.number} ${dataListing.address.street}, ${dataListing.address.ward}, ${dataListing.address.district}, ${dataListing.address.city}`
+        }
+    })
 
     useEffect(() => {
         const getInfoLandlord = async () => {
@@ -56,10 +54,6 @@ const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, address, onClo
         getInfoLandlord()
     }, [listingId])
 
-    // const submitRequestInfoForm: SubmitHandler<RequestInfoFormType> = (values) => {
-    //     console.log('submitRequestInfoForm', values);
-    // }
-
     return (
 
         <div className={`w-full h-full lg:h-fit
@@ -72,7 +66,6 @@ const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, address, onClo
                 </div>
             </div>}
             <form action="" className="flex flex-col gap-2"
-            // onSubmit={handleSubmit(submitRequestInfoForm)}
             >
                 <div className="flex flex-col gap-4">
                     <RequestInfoInput register={register} label="Phone" name="phone" type="text" />
