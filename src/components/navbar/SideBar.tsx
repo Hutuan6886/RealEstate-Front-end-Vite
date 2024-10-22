@@ -1,10 +1,13 @@
-import { Button } from "../ui/button"
-import MainNav from "./MainNav"
 import { Link } from "react-router-dom"
-import { UserReduxType } from "@/features/user/userSlice"
-import { IoClose } from "react-icons/io5"
+
+import { UserReduxType } from "@/types/types"
+
+import MainNav from "./MainNav"
 import AvatarSideBar from "./AvatarSideBar"
 
+import { Button } from "@/components/ui/button"
+
+import { IoClose } from "react-icons/io5"
 
 interface SideBarProps {
     visible: boolean
@@ -24,8 +27,8 @@ const SideBar: React.FC<SideBarProps> = ({ visible, closeSideBar, currentUser })
                             : null}
                         {!currentUser.id ?
                             <div className="w-full flex flex-row items-center gap-2">
-                                <Link className="w-full " to='/register'><Button variant='default' className="w-full font-semibold text-lg bg-white text-zinc-700"> Register</Button></Link>
-                                <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-semibold text-lg"> Log In</Button></Link>
+                                <Link className="w-full " to='/register'><Button variant='default' className="w-full font-bold bg-white text-zinc-700"> Register</Button></Link>
+                                <Link className="w-full" to='/log-in'><Button variant='login' className="w-full font-bold"> Log In</Button></Link>
                             </div>
                             : <AvatarSideBar currentUser={currentUser} />}
                     </div>

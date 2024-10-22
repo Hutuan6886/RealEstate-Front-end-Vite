@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { RootState } from "@/redux/store";
 import { ProfileOauthForm } from "@/form_schema/FormSchema"
@@ -123,7 +123,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
                         control={oauthProfileForm.control}
                         render={({ field }) => (
                             <FormItem className="w-full col-span-1">
-                                <FormLabel className="font-semibold">Gender</FormLabel>
+                                <FormLabel className="font-semibold flex gap-1">Gender</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl className="rounded-[0.375rem]">
                                         <SelectTrigger>

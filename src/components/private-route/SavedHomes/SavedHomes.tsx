@@ -1,6 +1,8 @@
-import HomeItem from "@/components/home-listing-list/HomeItem"
-import { RootState } from "@/redux/store"
 import { useSelector } from "react-redux"
+
+import { RootState } from "@/redux/store"
+
+import HomeItem from "@/components/home-listing-list/HomeItem"
 
 const SavedHomes = () => {
 

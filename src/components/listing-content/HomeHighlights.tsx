@@ -27,8 +27,8 @@ const HomeHighlights: React.FC<HomeHighlightsProps> = ({ dataListing }) => {
                     <tr className='grid grid-cols-2'>
                         <td className="flex flex-row items-center justify-start gap-3 text-zinc-600"><MdSquareFoot className="text-lg" /> Price/Sqft</td>
                         {dataListing.discountPrice
-                            ? <td className="text-sm font-semibold">{dataListing.regularPrice && dataListing.discountPrice && dataListing.squaremetre && formatter.format((dataListing.regularPrice - dataListing.discountPrice) / dataListing.squaremetre)}</td>
-                            : <td className="text-sm font-semibold">{dataListing.regularPrice && dataListing.discountPrice && dataListing.squaremetre && formatter.format(dataListing.regularPrice / dataListing.squaremetre)}</td>}
+                            ? <td className="text-sm font-semibold">{dataListing.regularPrice && dataListing.squaremetre && formatter.format((dataListing.regularPrice - dataListing.discountPrice) / dataListing.squaremetre)}</td>
+                            : <td className="text-sm font-semibold">{dataListing.regularPrice && dataListing.squaremetre && formatter.format(dataListing.regularPrice / dataListing.squaremetre)}</td>}
                     </tr>
                     <tr className='grid grid-cols-2'>
                         <td className="col-span-1 flex flex-row gap-3 text-zinc-600"><FaCalendarDay className="text-lg" />Listed</td>

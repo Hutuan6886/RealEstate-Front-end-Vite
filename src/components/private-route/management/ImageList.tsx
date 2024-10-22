@@ -70,7 +70,10 @@ export const ImageList = <T extends FieldValues>({ imageList, pathName, setValue
                                         <ImageDrop index={0}
                                             imageActive={imageActive}
                                             handleDrop={handleDrop} />
-                                        <ImageItem index={i} imgUrl={imgUrl}
+                                        <ImageItem
+                                            index={i}
+                                            imageActive={imageActive}
+                                            imgUrl={imgUrl}
                                             onDelete={() => { deleteImgStorage(imgUrl) }}
                                             handleDragStart={handleDragStart}
                                             handleDragEnd={handleDragEnd}
@@ -82,7 +85,10 @@ export const ImageList = <T extends FieldValues>({ imageList, pathName, setValue
                                     handleDrop={handleDrop} />
                             </>
                             : <>
-                                <ImageItem index={i} imgUrl={imgUrl}
+                                <ImageItem
+                                    index={i}
+                                    imageActive={imageActive}
+                                    imgUrl={imgUrl}
                                     onDelete={() => { deleteImgStorage(imgUrl) }}
                                     handleDragStart={handleDragStart}
                                     handleDragEnd={handleDragEnd} />

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
 
+import useGetListingList from "@/hooks/useGetListingList"
+import useListingPagination from "@/hooks/useListingPagination"
 import { dataSort } from "@/data/dataSort"
-import { FilterFormType, ListingReduxType } from "@/types/types"
+import { FilterFormType } from "@/types/types"
 
 import SearchMap from "@/components/map/map"
 import HomeItem from "@/components/home-listing-list/HomeItem"
@@ -16,20 +18,41 @@ import MapModal from "@/components/map/MapModal"
 import Sort from "@/components/search-sort/sort"
 
 const Search = () => {
-    const [homeData, setHomeData] = useState<ListingReduxType[]>()
-
     const [isOpenFilterFormModal, setIsOPenFilterFormModal] = useState<boolean>(false)
-
-    const [currentPage, setCurrentPage] = useState<number>(1)   //todo: current page number, start page from 1
-    const [postsPerPage] = useState<number>(10) //todo: dataItems / page
 
     const navigate = useNavigate()
     const clientScreenSize = useWindowSize()
     const location = useLocation()
 
+    //todo: SEARCH FORM
     const { register, handleSubmit, setValue, getValues, watch, reset } = useForm<FilterFormType>()
 
-    //todo: get params value to form
+    //todo: GET DATA LISTINGLIST
+    const urlSearchParams = new URLSearchParams(location.search)
+    const { dataListingList, sortListingFunction } = useGetListingList(`/api/listing/search?${urlSearchParams.toString()}`)
+
+    //todo: LISTING PAGINATION
+    const { currentPage, postsPerPage, lisingPaginationData, paginationNumberClick, previousPage, nextPage } = useListingPagination(dataListingList)
+
+    const submit: SubmitHandler<FilterFormType> = (values) => {
+        const urlFilterParams = new URLSearchParams()
+        urlFilterParams.set("searchTerm", values.searchTerm);
+        urlFilterParams.set("lat", values.lat.toString());
+        urlFilterParams.set("lng", values.lng.toString());
+        urlFilterParams.set("formType", values.formType);
+        urlFilterParams.set("houseType", values.houseType.toString())
+        urlFilterParams.set("priceMin", values.price.min)
+        urlFilterParams.set("priceMax", values.price.max)
+        urlFilterParams.set("beds", values.beds.toString())
+        urlFilterParams.set("baths", values.baths.toString())
+        urlFilterParams.set("squarefeetMin", values.squarefeet.min)
+        urlFilterParams.set("squarefeetMax", values.squarefeet.max)
+        urlFilterParams.set("keywords", values.keywords.toString())
+        setIsOPenFilterFormModal(false);
+        navigate(`/search?${urlFilterParams}`)
+    }
+
+    //todo: Declare params value to form
     useEffect(() => {
         const urlSearchParams = new URLSearchParams(location.search)
         //todo: set default form get from searchParams
@@ -53,80 +76,6 @@ const Search = () => {
         })
     }, [reset, location.search])
 
-    //todo: Get dataListing
-    useEffect(() => {
-        async function getAllListing() {
-            const urlSearchParams = new URLSearchParams(location.search)
-            try {
-                const res = await fetch(`/api/listing/search?${urlSearchParams.toString()}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "Application/json"
-                    },
-                    cache: "no-cache"
-                })
-                if (res.ok) {
-                    const allListing = await res.json()
-                    setHomeData(allListing)
-                }
-            } catch (error) {
-                console.log("getAllListing", error);
-            }
-        }
-        getAllListing()
-    }, [location.search])
-
-    const submit: SubmitHandler<FilterFormType> = (values) => {
-        const urlFilterParams = new URLSearchParams()
-        urlFilterParams.set("searchTerm", values.searchTerm);
-        urlFilterParams.set("lat", values.lat.toString());
-        urlFilterParams.set("lng", values.lng.toString());
-        urlFilterParams.set("formType", values.formType);
-        urlFilterParams.set("houseType", values.houseType.toString())
-        urlFilterParams.set("priceMin", values.price.min)
-        urlFilterParams.set("priceMax", values.price.max)
-        urlFilterParams.set("beds", values.beds.toString())
-        urlFilterParams.set("baths", values.baths.toString())
-        urlFilterParams.set("squarefeetMin", values.squarefeet.min)
-        urlFilterParams.set("squarefeetMax", values.squarefeet.max)
-        urlFilterParams.set("keywords", values.keywords.toString())
-        setIsOPenFilterFormModal(false);
-        navigate(`/search?${urlFilterParams}`)
-    }
-
-    //todo: Pagination
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const homePaginationData = homeData?.slice(indexOfFirstPost, indexOfLastPost)
-    const paginationNumberClick = (page: number) => { setCurrentPage(page) }
-    const previousPage = () => {
-        let page = currentPage
-        page -= 1
-        setCurrentPage(page)
-    }
-    const nextPage = () => {
-        let page = currentPage
-        page += 1
-        setCurrentPage(page)
-    }
-
-    const sortFunction = (field: string, sort: string) => {
-        if (field === 'regularPrice') {
-            if (sort === "asc") {
-                setHomeData((existing) => existing && [...existing.sort((previousItem: ListingReduxType, nextItem: ListingReduxType) => (previousItem.regularPrice as number) - (nextItem.regularPrice as number))])
-            } else if (sort === "desc") {
-                setHomeData((existing) => existing && [...existing.sort((previousItem: ListingReduxType, nextItem: ListingReduxType) => (nextItem.regularPrice as number) - (previousItem.regularPrice as number))])
-            }
-        }
-        else if (field === 'createAt') {
-            if (sort === "asc") {
-                setHomeData((existing) => existing && [...existing.sort((previousItem: ListingReduxType, nextItem: ListingReduxType) => new Date(previousItem.createAt).valueOf() - new Date(nextItem.createAt).valueOf())])
-            } else if (sort === "desc") {
-                setHomeData((existing) => existing && [...existing.sort((previousItem: ListingReduxType, nextItem: ListingReduxType) => new Date(nextItem.createAt).valueOf() - new Date(previousItem.createAt).valueOf())])
-            }
-        }
-    }
-
     if (!clientScreenSize) return null
 
     return (
@@ -145,14 +94,14 @@ const Search = () => {
                         {clientScreenSize < 480
                             ? <div className="flex flex-row items-center justify-start gap-5">
                                 {
-                                    watch("searchTerm") && watch("lat") && watch("lng") ? <MapModal key={watch("searchTerm") || watch("lat") || watch("lng")} lat={watch("lat")} lng={watch("lng")} homeList={homePaginationData} /> : null
+                                    watch("searchTerm") && watch("lat") && watch("lng") ? <MapModal key={watch("searchTerm") || watch("lat") || watch("lng")} lat={watch("lat")} lng={watch("lng")} homeList={lisingPaginationData} /> : null
                                 }
                                 <FilterFormModal register={register} watch={watch} setValue={setValue} isOpen={isOpenFilterFormModal} setIsOpen={setIsOPenFilterFormModal} />
                             </div>
                             : null
                         }
                     </form>
-                    <Sort dataSort={dataSort} sortFunc={sortFunction} />
+                    <Sort dataSort={dataSort} sortFunc={sortListingFunction} />
                 </div>
                 <div className="flex flex-col items-center gap-5">
                     <h3 className="text-xl font-semibold text-zinc-700">{`Real Estate & Homes ${getValues("formType") === "Sell" ? "For Sale" : "For Rent"} ${getValues("searchTerm") ? `in ${getValues("searchTerm")}` : ""}`}</h3>
@@ -160,7 +109,7 @@ const Search = () => {
                         <div style={{ scrollbarWidth: "none" }} className={`${watch("searchTerm") ? "col-span-1 md:col-span-3" : "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-5"}  overflow-y-scroll`}>
                             <div className={`grid ${watch("searchTerm") ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"} gap-5`}>
                                 {
-                                    homePaginationData?.map((homeItem, i) => (
+                                    lisingPaginationData?.map((homeItem, i) => (
                                         <div key={i} className="col-span-1">
                                             <HomeItem homeItemData={homeItem} isSearchItem={true} />
                                         </div>
@@ -169,10 +118,10 @@ const Search = () => {
                             </div>
                         </div>
                         {
-                            watch("searchTerm") && watch("lat") && watch("lng") && clientScreenSize > 480 ? <div className="w-full z-0 col-span-1 md:col-span-2"><SearchMap key={watch("searchTerm") || watch("lat") || watch("lng")} lat={watch("lat")} lng={watch("lng")} homeList={homePaginationData} /></div> : null
+                            watch("searchTerm") && watch("lat") && watch("lng") && clientScreenSize > 480 ? <div className="w-full z-0 col-span-1 md:col-span-2"><SearchMap key={watch("searchTerm") || watch("lat") || watch("lng")} lat={watch("lat")} lng={watch("lng")} homeList={lisingPaginationData} /></div> : null
                         }
                     </div>
-                    <PaginationControl currentPage={currentPage} postsPerPage={postsPerPage} totalPosts={homeData?.length as number} paginationNumberClick={paginationNumberClick} previousPage={previousPage} nextPage={nextPage} />
+                    <PaginationControl currentPage={currentPage} postsPerPage={postsPerPage} totalPosts={dataListingList?.length as number} paginationNumberClick={paginationNumberClick} previousPage={previousPage} nextPage={nextPage} />
                 </div>
             </div>
         </div >

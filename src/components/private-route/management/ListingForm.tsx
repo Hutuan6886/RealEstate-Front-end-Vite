@@ -1,11 +1,11 @@
 import { ChangeEvent, useState } from "react"
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import { app } from "@/firebase";
-import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { uploadImg } from "@/functions/firebase/uploadFirebase";
+import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { addListing } from "@/features/user/userSlice";
 import { dataFormType, dataHouseType } from "@/data/dataForm";
 import { UserReduxType } from "@/types/types";
@@ -78,140 +78,103 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     })
 
     //todo: Firebase rule: a img is less than 2 MB
-    // //todo: Upload cách 1
+    //todo: Upload cách 1
+    const submitUploadImg = async () => {
+        //todo: submitUploadImg to update img to storage, then return res which is img array -> use img array to render layout -> submit create listing on DB
+        //* Upload từng img trong mảng imgUrl vào storage
+        if (files?.length === undefined) return
+        if (files?.length > 0 && files?.length < 7) {
+            setLoadingUpload(true)
+            //* condition: min:1, max:6 img
+            //todo: Upload cách 1
+            const promises: string[] = []
+            for (const img of files) {
+                //* Upload từng img trong mảng imgUrl, 
+                promises.push(await uploadImg(img)) //* từng img sau khi upload sẽ được uploadImg được trả về sẽ push vào promises array
+            }
+            await Promise.all(promises)   //* Wait tất cả file mà promise array có được khi promise array được uploadImg function trả về các img, bởi vì uploadImg function là 1 Promise<string>
+                .then((imgUrlArray: string[]) => {
+                    setValue("imgUrl", [...watch("imgUrl"), ...imgUrlArray]) //* set imgUrlArray trả về vào imgUrls form là img data để hiển thị trên layouts
+                    toast({
+                        className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+                        description: 'Upload image successfully.'
+                    });
+                }).finally(() => {
+                    setLoadingUpload(false)
+                })
+        }
+    }
+
+    // //todo: Upload cách 2
     // const submitUploadImg = async () => {
-    //     //todo: submitUploadImg to update img to storage, then return res which is img array -> use img array to render layout -> submit create listing on DB
-    //     //* Upload từng img trong mảng imgUrl vào storage
-    //     if (files?.length === undefined) return
-    //     if (files?.length > 0 && files?.length < 7) {
-    //         //* condition: min:1, max:6 img
-    //         //todo: Upload cách 1
-    //         const promises: string[] = []
-    //         for (const img of files) {
-    //             //* Upload từng img trong mảng imgUrl, 
-    //             promises.push(await uploadImg(img)) //* tuwfngF img sau khi upload sẽ được uploadImg được trả về sẽ push vào promises array
-    //         }
-    //         await Promise.all(promises)   //* Wait tất cả file mà promise array có được khi promise array được uploadImg function trả về các img, bởi vì uploadImg function là 1 Promise<string>
-    //             .then((imgUrlArray: string[]) => {
-    //                 setImgUrls(imgUrlArray)
+    //     try {
+    //         setLoadingUpload(true)
+    //         if (files?.length === undefined || files?.length <= 0) {
+    //             return toast({
+    //                 title: "Upload image Listing",
+    //                 className: "bg-red-600 text-white rounded-[0.375rem]",
+    //                 description: "No image updated!"
     //             })
+    //         }
+    //         if (files?.length > 0 && files?.length < 7) {
+    //             for (const img of files) {
+    //                 await uploadImg(img)
+    //             }
+    //             toast({
+    //                 className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+    //                 description: "Upload image is successfully."
+    //             })
+    //         } else {
+    //             return toast({
+    //                 title: "Upload image Listing",
+    //                 className: "bg-red-600 text-white rounded-[0.375rem]",
+    //                 description: "Images is invalid!"
+    //             })
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         return toast({
+    //             title: "Upload image Listing",
+    //             className: "bg-red-600 text-white rounded-[0.375rem]",
+    //             description: 'Something went wrong!'
+    //         })
+
+    //     } finally {
+    //         setLoadingUpload(false)
     //     }
     // }
-    // const uploadImg = async (file: File): Promise<string> => {
-    //     return new Promise((resolve, reject) => {
-    //         const storage = getStorage(app);
-    //         const imgName = new Date().getTime() + file.name;
-    //         const storageRef = ref(storage, imgName);
-    //         const uploadTask = uploadBytesResumable(storageRef, file)
-    //         uploadTask.on("state_changed",
-    //             (snapshot) => {
-    //                 //todo: Nếu k sử dụng function này thì vẫn phải khai báo
-    //                 console.log(snapshot);
-    //             },
-    //             (error) => {
-    //                 reject(error)
-    //             },    //* Xử lý nếu có error
-    //             () => {
-    //                 getDownloadURL(uploadTask.snapshot.ref).then((imgUrl: string) => {
-    //                     resolve(imgUrl)
-    //                 })
-    //             }   //* Trả về 1 imgUrl, xử lý để lấy từng img trả về
-    //         )
-    //     })
+    // const uploadImg = async (file: File): Promise<void> => {
+    //     const storage = getStorage(app);
+    //     const imgName = new Date().getTime() + file.name;
+    //     const storageRef = ref(storage, imgName);
+    //     const uploadTask = uploadBytesResumable(storageRef, file)
+    //     uploadTask.on("state_changed",
+    //         (snapshot) => {
+    //             //todo: Nếu k sử dụng function này thì vẫn phải khai báo
+    //             const progress = parseInt(((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed())
+    //             console.log(progress);
+    //         },
+    //         (error) => {
+    //             console.log(error);
+    //             return toast({
+    //                 title: "Upload image Listing",
+    //                 className: "bg-red-600 text-white rounded-[0.375rem]",
+    //                 description: "Upload Image failed (2MB max per image)!"
+    //             })
+    //         },    //* Xử lý nếu có error
+    //         () => {
+    //             getDownloadURL(uploadTask.snapshot.ref).then((url: string) => {
+    //                 setValue("imgUrl", [...watch("imgUrl"), url]) //* set từng img trả về vào imgUrls form là data để hiển thị trên layouts
+    //             })
+    //         }
+    //     )
     // }
-
-    //todo: Firebase rule: a img is less than 2MB
-    //todo: Upload cách 2
-    const submitUploadImg = async () => {
-        try {
-            setLoadingUpload(true)
-            if (files?.length === undefined || files?.length <= 0) {
-                return toast({
-                    title: "Upload image Listing",
-                    className: "bg-red-600 text-white rounded-[0.375rem]",
-                    description: "No image updated!"
-                })
-            }
-            if (files?.length > 0 && files?.length < 7) {
-                for (const img of files) {
-                    await uploadImg(img)
-                }
-                toast({
-                    className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
-                    description: "Upload image is successfully."
-                })
-            } else {
-                return toast({
-                    title: "Upload image Listing",
-                    className: "bg-red-600 text-white rounded-[0.375rem]",
-                    description: "Images is invalid!"
-                })
-            }
-        } catch (error) {
-            console.log(error);
-            return toast({
-                title: "Upload image Listing",
-                className: "bg-red-600 text-white rounded-[0.375rem]",
-                description: 'Something went wrong!'
-            })
-
-        } finally {
-            setLoadingUpload(false)
-        }
-
-    }
-    const uploadImg = async (file: File): Promise<void> => {
-        const storage = getStorage(app);
-        const imgName = new Date().getTime() + file.name;
-        const storageRef = ref(storage, imgName);
-        const uploadTask = uploadBytesResumable(storageRef, file)
-        uploadTask.on("state_changed",
-            (snapshot) => {
-                //todo: Nếu k sử dụng function này thì vẫn phải khai báo
-                const progress = parseInt(((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed())
-                console.log(progress);
-            },
-            (error) => {
-                console.log(error);
-                return toast({
-                    title: "Upload image Listing",
-                    className: "bg-red-600 text-white rounded-[0.375rem]",
-                    description: "Upload Image failed (2MB max per image)!"
-                })
-            },    //* Xử lý nếu có error
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((url: string) => {
-                    setValue("imgUrl", [...watch("imgUrl"), url]) //* set từng img trả về vào imgUrls form là data để hiển thị trên layouts
-                })
-            }
-        )
-    }
 
     const deleteImgStorage = async (imgUrl: string) => {
         //todo: delete img trong firebase
-        const storage = getStorage(app);
-        // Create a reference to the file to delete
-        const storageRef = ref(storage, imgUrl);
-        // Delete the file
-        await deleteObject(storageRef).then(async () => {
-            try {
-                //todo: Delete imgUrl tại form để hiển thị trên layout
-                setValue("imgUrl", [...watch("imgUrl").filter((img: string) => img !== imgUrl)])
-            } catch (error) {
-                return toast({
-                    title: "Delete image storage",
-                    className: "bg-red-600 text-white rounded-[0.375rem]",
-                    description: 'Something went wrong!'
-                })
-            }
-            // File deleted successfully
-            toast({
-                className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
-                description: 'Delete image storage is successfully.'
-            })
-        }).catch((error) => {
-            // Uh-oh, an error occurred!
-            console.log(error);
+        deletedImg(imgUrl).then(() => {
+            //todo: Delete imgUrl tại form để hiển thị trên layout
+            setValue("imgUrl", [...watch("imgUrl").filter((img: string) => img !== imgUrl)])
         })
     }
 

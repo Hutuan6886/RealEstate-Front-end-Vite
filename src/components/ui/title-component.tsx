@@ -10,7 +10,7 @@ const TitleComponent: React.FC<TitleComponentProps> = ({ children, title, descri
     <div className="w-full h-full my-10">
       <div className="flex flex-col gap-5">
         <div className="w-[90%] md:w-[50%] m-auto flex flex-col gap-3">
-          <h3 className="text-4xl text-center font-semibold">{title}</h3>
+          <h3 className="text-3xl md:text-4xl text-center font-semibold">{title}</h3>
           <p className="text-zinc-600 text-sm text-center">{description}</p>
         </div>
         {children}

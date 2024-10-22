@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from "react-redux"
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
-
 import { app } from "@/firebase"
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
+
 import { RootState } from "@/redux/store"
 import { loginUserSuccess } from "@/features/user/userSlice"
 
 import { ToastAction } from "@/components/ui/toast"
-import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button"
 
 import { FcGoogle } from "react-icons/fc"
 import { FaGithub } from "react-icons/fa"

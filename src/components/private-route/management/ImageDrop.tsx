@@ -13,7 +13,11 @@ const ImageDrop = ({ index, imageActive, handleDrop }: ImageDropProps) => {
     if (imageActive === undefined) return
     //todo: imageActive === index || imageActive + 1 === index -> ẩn đi các Drop bên cạnh trái phải của imageActive khi drag
     return (
-        <div className={`${!isShowDrop || imageActive === index || imageActive + 1 === index ? "opacity-0 size-2" : "opacity-100 size-40"} size-40 border rounded-[0.375rem] transition-all`}
+        <div
+            className={`
+            ${imageActive === index || imageActive + 1 === index ? "hidden" : "block"} 
+            ${!isShowDrop ? "opacity-0 size-2" : "opacity-100 size-40"}
+             border rounded-[0.375rem] transition-all`}
             onDragEnter={() => setIsShowDrop(true)}
             onMouseLeave={() => setIsShowDrop(false)}
             onDragOver={(e: DragEvent<HTMLDivElement>) => e.preventDefault()} //* Phải có onDragOver thì onDrop mới bắt đc giá trị

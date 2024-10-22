@@ -1,18 +1,21 @@
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+
+import { loginUserFailure, loginUserLoading, loginUserSuccess } from "@/features/user/userSlice"
+import { RootState } from "@/redux/store"
+import { LoginFormSchema } from "@/form_schema/FormSchema"
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+
+import Oauth from "./Oauth"
+
 import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 
-import { LoginFormSchema } from "@/form_schema/FormSchema"
-import { useNavigate } from "react-router-dom"
-import { useToast } from "@/components/ui/use-toast"
-import { ToastAction } from "@/components/ui/toast"
-import { useDispatch, useSelector } from "react-redux"
-import { loginUserFailure, loginUserLoading, loginUserSuccess } from "@/features/user/userSlice"
-import Oauth from "./Oauth"
-import { RootState } from "@/redux/store"
 
 type LoginFormType = z.infer<typeof LoginFormSchema>
 const RegisterForm = () => {
@@ -37,7 +40,7 @@ const RegisterForm = () => {
                     "Content-Type": "Application/json"
                 },
                 cache: 'no-cache',
-                method: 'post',
+                method: 'POST',
                 body: JSON.stringify(data)
             })
             if (res.ok) {
@@ -75,7 +78,6 @@ const RegisterForm = () => {
         } finally {
             loginForm.reset()
         }
-
     }
     return (
         <Form {...loginForm}>

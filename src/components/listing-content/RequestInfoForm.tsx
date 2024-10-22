@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import { useSelector } from "react-redux"
 import { useForm } from "react-hook-form"
-import { Link, useParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import { RootState } from "@/redux/store"
-import { LandlordType, ListingReduxType, RequestInfoFormType } from "@/types/types"
+import { ListingReduxType, RequestInfoFormType } from "@/types/types"
 
 import RequestInfoInput from "./RequestInfoInput"
 import RequestInfoTextArea from "./RequestInfoTextArea"
 import { Button } from "@/components/ui/button"
 
 import { IoClose } from "react-icons/io5"
+import useGetInfoLandlord from "@/hooks/useGetInfoLandlord"
 
 interface RequestInfoFormProps {
     label?: string
@@ -20,11 +21,14 @@ interface RequestInfoFormProps {
 
 const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, dataListing, onClose }) => {
     const checkBoxRef = useRef<HTMLInputElement>(null)
-    const { listingId } = useParams()
-    const [infoLandlord, setInfoLandlord] = useState<LandlordType>()
 
-    const currentUser = useSelector((state: RootState) => state.user.currentUser)
+    //todo: USER REDUX
+    const { currentUser } = useSelector((state: RootState) => state.user)
 
+    //todo: GET LANDLORD DATA
+    const { infoLandlord } = useGetInfoLandlord(dataListing.id)
+
+    //todo: LANDLORD FORM
     const { register, getValues } = useForm<RequestInfoFormType>({
         defaultValues: {
             phone: currentUser ? currentUser.phone : undefined,
@@ -33,29 +37,7 @@ const RequestInfoForm: React.FC<RequestInfoFormProps> = ({ label, dataListing, o
         }
     })
 
-    useEffect(() => {
-        const getInfoLandlord = async () => {
-            try {
-                const resquest = await fetch(`/api/listing/get-listing-landlord/${listingId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "Application/json",
-                    },
-                    cache: 'no-cache'
-                })
-                if (resquest.ok) {
-                    const dataInfoLandlord = await resquest.json()
-                    setInfoLandlord(dataInfoLandlord)
-                }
-            } catch (error) {
-                console.log('getInfoLandlord Error', error);
-            }
-        }
-        getInfoLandlord()
-    }, [listingId])
-
     return (
-
         <div className={`w-full h-full lg:h-fit
                         ${!label && "border"} border-zinc-300 rounded-[0.375rem] shadow-lg p-5
                         flex flex-col gap-2`}>

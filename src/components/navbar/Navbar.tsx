@@ -1,16 +1,17 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+
+import { RootState } from "@/redux/store";
+
+import SearchField from "@/components/search-field/search-field";
+import SideBar from "./SideBar";
 import MainNav from "./MainNav";
 import AvatarNav from "./AvatarNav"
+
 import { Button } from "@/components/ui/button";
-import {
-  IoMenu
-} from "react-icons/io5";
-import { RootState } from "@/redux/store";
-import SideBar from "./SideBar";
-import SearchField from "@/components/search-field/search-field";
+
+import { IoMenu } from "react-icons/io5";
 
 const Navbar = () => {
   const [isSideBar, setIsSidebar] = useState<boolean>(false)
@@ -19,6 +20,12 @@ const Navbar = () => {
 
   //todo: Redux
   const { currentUser } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    //todo: turn off sidbar if change the page
+    setIsSidebar(false)
+  }, [location.key])
+
 
   return (
     <nav className="relative w-full bg-white py-3">

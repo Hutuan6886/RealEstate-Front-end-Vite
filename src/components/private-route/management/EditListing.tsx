@@ -1,14 +1,13 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { app } from "@/firebase";
-import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
-import { toast } from "@/components/ui/use-toast"
+import useGetListing from "@/hooks/useGetListing";
+import { uploadImg } from "@/functions/firebase/uploadFirebase";
+import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { ManageListingFormSchema } from "@/form_schema/FormSchema";
-import { ListingReduxType } from "@/types/types";
 import { updateListing } from "@/features/user/userSlice";
 
 import InputLabel from "@/components/ui/input-label"
@@ -21,6 +20,7 @@ import FilterKeywords from "@/components/ui/filter-keywords";
 import { Button } from "@/components/ui/button"
 import { ImageList } from "./ImageList"
 import { ManageListingFormType } from "./ListingForm";
+import { toast } from "@/components/ui/use-toast"
 
 import { MdCloudUpload } from "react-icons/md"
 import { TbMeterSquare } from "react-icons/tb"
@@ -37,13 +37,12 @@ const EditListing = () => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const { listingId } = useParams()
 
     //todo: IMG UPLOAD STATE
     const [isLoadingUpload, setLoadingUpload] = useState<boolean>(false)
     const [files, setUploadFiles] = useState<FileList | null>()
 
-    //todo: HOOK
-    const { listingId } = useParams()
 
     //todo: FORM
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting },
@@ -79,55 +78,51 @@ const EditListing = () => {
             resolver: zodResolver(ManageListingFormSchema)
         })
 
-    useEffect(() => {
-        //todo: GET data listing item from db
-        const getDataListingByListingId = async () => {
-            try {
-                const res = await fetch(`/api/listing/get-listing-item/${listingId}`, {
-                    method: 'GET',
-                    headers: {
-                        "Content-Type": "Application/json",
-                    }, cache: 'no-cache'
-                })
-                if (res.ok) {
-                    const data: ListingReduxType = await res.json()
-                    //todo: Get data from DB then adding to Form
-                    reset({
-                        id: data.id,
-                        name: data.name,
-                        description: data.description,
-                        imgUrl: [...data.imgUrl],
-                        formType: data.formType as ManageListingFormType["formType"],
-                        houseType: data.houseType as ManageListingFormType["houseType"],
-                        furnished: data.furnished,
-                        parking: data.parking,
-                        offer: data.offer,
-                        amenities: data.amenities,
-                        squaremetre: data.squaremetre,
-                        bedrooms: data.bedrooms,
-                        bathrooms: data.bathrooms,
-                        regularPrice: Intl.NumberFormat("vi-VN").format(data.regularPrice),     //* Convert number to value of number with comma
-                        discountPrice: Intl.NumberFormat("vi-VN").format(data.discountPrice as number) || "",
-                        address: {
-                            number: data.address.number,
-                            street: data.address.street,
-                            ward: data.address.ward,
-                            district: data.address.district,
-                            city: data.address.city,
-                        },
-                        location: {
-                            latitude: data.location.latitude,
-                            longitude: data.location.longitude
-                        },
-                    });
-                    setValueOfferField(data.offer)
-                }
-            } catch (error) {
-                console.log(error);
-            }
+    const changeCheckedOffer = (e: ChangeEvent<HTMLInputElement>) => {
+        setValueOfferField(e.target.checked)
+        if (!e.target.checked) {
+            setValue("discountPrice", "0")
         }
-        getDataListingByListingId()
-    }, [listingId, reset])
+    }
+
+    //todo: GET DATA LISTING
+    const { dataListing } = useGetListing(`/api/listing/get-listing-item/${listingId}`)
+
+    useEffect(() => {
+        //todo: DECLARE DATA LISTING TO FORM
+        if (dataListing) {
+            reset({
+                id: dataListing.id,
+                name: dataListing.name,
+                description: dataListing.description,
+                imgUrl: [...dataListing.imgUrl],
+                formType: dataListing.formType as ManageListingFormType["formType"],
+                houseType: dataListing.houseType as ManageListingFormType["houseType"],
+                furnished: dataListing.furnished,
+                parking: dataListing.parking,
+                offer: dataListing.offer,
+                amenities: dataListing.amenities,
+                squaremetre: dataListing.squaremetre,
+                bedrooms: dataListing.bedrooms,
+                bathrooms: dataListing.bathrooms,
+                regularPrice: Intl.NumberFormat("vi-VN").format(dataListing.regularPrice),     //* Convert number to value of number with comma
+                discountPrice: Intl.NumberFormat("vi-VN").format(dataListing.discountPrice as number) || "",
+                address: {
+                    number: dataListing.address.number,
+                    street: dataListing.address.street,
+                    ward: dataListing.address.ward,
+                    district: dataListing.address.district,
+                    city: dataListing.address.city,
+                },
+                location: {
+                    latitude: dataListing.location.latitude,
+                    longitude: dataListing.location.longitude
+                },
+            });
+            setValueOfferField(dataListing.offer)
+        }
+    }, [dataListing, reset, setValueOfferField])
+
 
     //todo: Firebase rule: a img is less than 2 MB
     // //todo: Upload cách 1
@@ -152,70 +147,15 @@ const EditListing = () => {
         }
     }
 
-    const uploadImg = async (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const storage = getStorage(app);
-            const imgName = new Date().getTime() + file.name;
-            const storageRef = ref(storage, imgName);
-            const uploadTask = uploadBytesResumable(storageRef, file)
-            uploadTask.on("state_changed",
-                (snapshot) => {
-                    //todo: Nếu k sử dụng function này thì vẫn phải khai báo
-                    console.log(snapshot);
-                },
-                (error) => {
-                    reject(error)
-                },    //* Xử lý nếu có error
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((imgUrl: string) => {
-                        resolve(imgUrl)
-                    })
-                }   //* Trả về 1 imgUrl, xử lý để lấy từng img trả về
-            )
+    const deleteImgStorage = (imgUrl: string) => {
+        // //todo: delete img trong firebase và database
+        deletedImg(imgUrl, listingId).then(() => {
+            //todo: Delete imgUrl trong form, bởi vì imgUrl là image data trên layout
+            setValue("imgUrl", [
+                ...watch("imgUrl").filter((img: string) => img !== imgUrl),
+            ]);
         })
-    }
 
-    const deleteImgStorage = async (imgUrl: string) => {
-        //todo: delete img trong firebase
-        const storage = getStorage(app);
-        // Create a reference to the file to delete
-        const storageRef = ref(storage, imgUrl);
-        // Delete the file
-        await deleteObject(storageRef).then(async () => {
-            try {
-                //todo: delete img trong DB để set lại dataListingItem
-                await fetch(`/api/listing/delete-image/${listingId}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }, cache: "no-cache",
-                    body: JSON.stringify({ imgUrl })
-                })
-                //todo: Delete imgUrl trong form, bởi vì imgUrl là data trên layout
-                setValue("imgUrl", [...watch("imgUrl").filter((img: string) => img !== imgUrl)])
-            } catch (error) {
-                return toast({
-                    title: "Delete image storage",
-                    className: "bg-red-600 text-white rounded-[0.375rem]",
-                    description: 'Something went wrong!'
-                })
-            }
-            // File deleted successfully
-            toast({
-                className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
-                description: 'Delete image storage is successfully.'
-            })
-        }).catch((error) => {
-            // Uh-oh, an error occurred!
-            console.log(error);
-        })
-    }
-
-    const changeCheckedOffer = (e: ChangeEvent<HTMLInputElement>) => {
-        setValueOfferField(e.target.checked)
-        if (!e.target.checked) {
-            setValue("discountPrice", "0")
-        }
     }
 
     const submitUpdateListing = async (data: ManageListingFormType): Promise<void> => {

@@ -1,6 +1,6 @@
+import Modal from "./Modal"
 
 import { Button } from "@/components/ui/button"
-import Modal from "./Modal"
 
 interface ModalDeleteProps {
     title: string;

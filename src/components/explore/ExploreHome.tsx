@@ -74,7 +74,7 @@ const ExploreHome = () => {
                             {exploreProvinceData.map((province, i) => (
                                 <div key={i} className={`col-span-1 ${i % 5 === 0 ? "row-span-2" : " row-span-1"}`}>
                                     {
-                                        <ExploreItem data={province} />
+                                        <ExploreItem data={province} width="full" />
                                     }
                                 </div>
                             ))}

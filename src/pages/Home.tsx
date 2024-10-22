@@ -11,26 +11,6 @@ import HomeListingList from "@/components/home-listing-list/NewlyHome"
 function Home() {
   const dispatch = useDispatch()
   //todo: Get All listing and save it into redux
-  // useEffect(() => {
-  //   async function getDataHome() {
-  //     try {
-  //       const res = await fetch("/api/listing/get-newly-listing", {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "Application/json"
-  //         },
-  //         cache: "no-cache"
-  //       })
-  //       if (res.ok) {
-  //         const allListing = await res.json()
-  //         dispatch(saveNewlyListingList(allListing))
-  //       }
-  //     } catch (error) {
-  //       console.log("getDataHome", error);
-  //     }
-  //   }
-  //   getDataHome()
-  // }, [dispatch])
   useEffect(() => {
     //todo: fetch mutiple api sử dụng Promise bởi vì data không phụ thuộc nhau
     async function getDataHome() {

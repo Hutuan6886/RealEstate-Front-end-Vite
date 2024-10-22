@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
+import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { RootState } from "@/redux/store";
-import { app } from "@/firebase";
 import { closeDeleteUserModal, deleteUserFailure, deleteUserLoading, deleteUserSuccess, openDeleteUserModal } from "@/features/user/userSlice";
 
 import CredentialsProfile from "./CredentialsProfile";
@@ -17,59 +16,43 @@ import { toast } from "@/components/ui/use-toast";
 
 import { BiSolidDashboard } from "react-icons/bi";
 import { IoTrash } from "react-icons/io5";
+import { uploadImg } from "@/functions/firebase/uploadFirebase";
 
 //todo: UPLOAD IMAGE
 //todo: Sử dụng useRef để lấy giá trị của <input type="file" onChange={(e)=>setImageUpload(e....)} ref={fileRef}> thông qua <img onClick={fileRef...}> ---> giá trị onchange của <input type="file"> được save tại imgUpload state là typeof File ---> truyền imgUpload và handleImageUpload(imgUpload:File) function để push img to firebase storage ---> Sau khi POST image request to firebase storage, firebase sẽ trả về response 1 imgUrl typeof string ---> sử dụng imgUrl để hiển thị ---> POST request to DB ---> lưu imgUrl vào user info ở redux
 
-
 const Profile = () => {
     //todo: Hook
-    const [imgUpload, setImageUpload] = useState<File>()
     const [imgFirebaseUrl, setImgFirebaseUrl] = useState<string>()
     const fileRef = useRef<HTMLInputElement>(null)
+
     //todo: Redux
     const { currentUser, isLoading, isOpenModal } = useSelector((state: RootState) => state.user)
     const dispatch = useDispatch()
-
 
     /* //! FIREBASE RULE (write file < 2MB)
       allow read;
       allow write: if 
       request.resource.size < 2 * 1024 * 1024 &&
       request.resource.contentType.matches("image/.*"); */
-    useEffect(() => {
-        if (imgUpload) {
-            handleImageUpload(imgUpload)
-        }
-    }, [imgUpload])
 
-    const handleImageUpload = (file: File) => {
-        const storage = getStorage(app)     //* create storage, {app} from "@/firebase"
-        const imgName = new Date().getTime() + file.name    //* create imgName
-        const storageRef = ref(storage, imgName) //* tạo nơi để lưu image trên storage theo imgName (Muốn tạo thêm folder: ref(storage, "newFolder/${imgName}"))
-        const uploadTask = uploadBytesResumable(storageRef, file)   //* sử dụng upload method to upload img to storage theo tên cỉa img
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const progress = parseInt(((snapshot.bytesTransferred / snapshot.totalBytes) * 100).toFixed())       //* progress loading... to update img from 0 to 100%
-                console.log(progress);
-                toast({
-                    title: "Update Avatar",
-                    className: `${progress < 100 ? "text-zinc-600" : "text-green-600"} bg-white rounded-[0.375rem]`,
-                    description: `${progress < 100 ? `Loading...${progress}%` : "Success."}`
-                })
-            },
-            (error) => {
-                toast({
-                    title: "Update Avatar",
-                    className: "text-red-600",
-                    description: error.message
-                })
-                console.log("Upload Error", error.message);
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((imgUrl: string) => { setImgFirebaseUrl(imgUrl) }) //* imgUrl from firebase response back
-            }
-        )
+    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files === null) return
+        if (currentUser.imgUrl !== "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png") {
+            //todo: "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png" là default avatar tạo tại DB schema
+            //todo: Nếu currentUserAvatar !== "https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_960_720.png" => không phải là default avatar => Thực hiện xoá ava cũ tại firebase và DB
+            //todo: delete img trong firebase
+            deletedImg(currentUser.imgUrl)
+        }
+        //todo: Sau khi xoá avatar cũ => thực hiện tạo avatar mới
+        const newAvatar: File = e.target.files[0]
+        await uploadImg(newAvatar).then((imgUrl: string) => {
+            setImgFirebaseUrl(imgUrl)
+            toast({
+                className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
+                description: "Update Avatar is successfully."
+            })
+        })
     }
 
     const deleteUser = async (userId: string) => {
@@ -84,6 +67,8 @@ const Profile = () => {
             })
             const { message } = await res.json()
             if (res.ok) {
+                //todo: Nếu delete user thành công, delete imgUrl trong firebase
+                deletedImg(currentUser.imgUrl)
                 dispatch(deleteUserSuccess())
                 toast({
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
@@ -117,20 +102,20 @@ const Profile = () => {
             <div className="w-full h-full md:grid grid-cols-4">
                 <div className="col-span-1 mb-3">
                     <div className="w-full md:w-[80%] m-auto flex flex-col gap-3 md:gap-11 items-start">
-                        <input onChange={(e) => {
-                            if (e.target.files === null) return
-                            setImageUpload(e.target.files[0])
-                        }} hidden accept="image/*" type="file" ref={fileRef} />
+                        <input
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => handleImageUpload(e)}
+                            hidden accept="image/*" type="file" ref={fileRef} />
                         <img className="rounded-[50px] border-2 size-24 m-auto cursor-pointer" onClick={() => fileRef.current?.click()} src={imgFirebaseUrl ? imgFirebaseUrl as string : currentUser.imgUrl as string} alt="avatar" />
                         <div className="m-auto flex flex-col gap-4">
-                            <Link to="/management" className="flex flex-row items-center justify-start gap-4"><BiSolidDashboard size={22} /> Product Management</Link>
+                            <Link to="/management" className="flex flex-row items-center justify-start gap-4 text-sm lg:text-base"><BiSolidDashboard size={22} /> Product Management</Link>
                         </div>
                     </div>
                 </div>
                 <div className="col-span-3 flex flex-col items-start gap-11">
                     <div className="w-full flex flex-row justify-between items-center gap-4">
                         <h1 className="font-semibold text-3xl text-teal-700">User Information</h1>
-                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => { dispatch(openDeleteUserModal()) }}><IoTrash /></Button>
+                        <Button type="button" className="bg-transparent text-rose-700 hover:text-rose-600 text-3xl p-0" onClick={() => { dispatch(openDeleteUserModal()) }}><IoTrash />
+                        </Button>
                     </div>
                     {/* //todo: Credentials form and Oauth form */}
                     {currentUser.provider === 'credentials' ? <CredentialsProfile imgFirebaseUrl={imgFirebaseUrl} /> : <OauthProfile imgFirebaseUrl={imgFirebaseUrl} />}

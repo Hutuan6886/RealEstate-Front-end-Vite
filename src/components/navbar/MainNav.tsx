@@ -1,6 +1,9 @@
-import { Button } from '@/components/ui/button'
-import { cn } from "@/lib/utils";
 import { useNavigate } from 'react-router-dom';
+
+import { cn } from "@/lib/utils";
+
+import { Button } from '@/components/ui/button'
+
 interface MainNavProps {
     className?: string
 }
@@ -18,7 +21,7 @@ const MainNav: React.FC<MainNavProps> = ({ className }) => {
             {dataNav.map((data, i) => {
                 return <div key={i} onClick={() => {
                     navigate(data.href)
-                }}><Button className="font-semibold lg:font-normal" variant='nav'>{data.label}</Button></div>
+                }}><Button className="font-bold md:font-semibold lg:font-normal" variant='nav'>{data.label}</Button></div>
             })}
         </div >
     )

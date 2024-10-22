@@ -12,8 +12,6 @@ import ListingItem from "./ListingItem";
 import ModalDelete from "@/components/modal/ModalDelete";
 import { toast } from "@/components/ui/use-toast"
 
-
-
 interface ListingListProps {
   title: string;
   description?: string

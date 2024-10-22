@@ -11,20 +11,20 @@ export const SearchFormSchema = z.object({
 export const RegisterFormSchema = z
   .object({
     userName: z.string().min(3, {
-      message: "The user name is required!",
+      message: "User name is required!",
     }),
     email: z.string().email({
-      message: "The email is invalid!",
+      message: "Email is invalid!",
     }),
     password: z
       .string()
       .min(8, {
         message:
-          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+          "Password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
       })
       .regex(passwordValidation, {
         message:
-          "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+          "Password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
       }),
     rePassword: z.string(),
   })
@@ -43,7 +43,7 @@ export const LoginFormSchema = z.object({
     message: "Email is invalid!",
   }),
   password: z.string().regex(passwordValidation, {
-    message: "The password is not valid!",
+    message: "Password is not valid!",
   }),
 });
 
@@ -51,20 +51,22 @@ export const ProfileForm = z
   .object({
     imgUrl: z.string().optional(),
     userName: z.string().min(3, {
-      message: "The user name is required!",
+      message: "User name is required!",
     }),
     phone: z
       .string()
-      .min(10, { message: "The phone number must be 10 numbers" })
-      .max(10, { message: "The phone number must be 10 numbers" }),
-    gender: z.string().optional(),
+      .min(10, { message: "Phone number must be 10 numbers" })
+      .max(10, { message: "Phone number must be 10 numbers" }),
+    gender: z
+      .enum(["Male", "Female"])
+      .optional(),
     birthday: z.string().optional(),
     address: z.string().optional(),
     email: z.string().email({
-      message: "The email is invalid!",
+      message: "Email is invalid!",
     }),
     currentPassword: z.string().min(8, {
-      message: "The password is required!",
+      message: "Password is required!",
     }),
     newPassword: z
       .optional(
@@ -72,11 +74,11 @@ export const ProfileForm = z
           .string()
           .min(8, {
             message:
-              "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+              "Password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
           })
           .regex(passwordValidation, {
             message:
-              "The password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
+              "Password is at least 8 characters, include a lowercase letter, an uppercase letter, a number and a special character!",
           })
       )
       .or(z.literal("")),
@@ -95,13 +97,15 @@ export const ProfileForm = z
 export const ProfileOauthForm = z.object({
   imgUrl: z.string().optional(),
   userName: z.string().min(3, {
-    message: "The user name is required!",
+    message: "User name is required!",
   }),
   phone: z
     .string()
-    .min(10, { message: "The phone number must be 10 numbers" })
-    .max(10, { message: "The phone number must be 10 numbers" }),
-  gender: z.string().optional(),
+    .min(10, { message: "Phone number must be 10 numbers" })
+    .max(10, { message: "Phone number must be 10 numbers" }),
+    gender: z
+    .enum(["Male", "Female"])
+    .optional(),
   birthday: z.string().optional(),
   address: z.string().optional(),
 });

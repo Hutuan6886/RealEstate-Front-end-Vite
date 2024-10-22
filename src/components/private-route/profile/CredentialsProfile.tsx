@@ -31,7 +31,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
         defaultValues: {
             userName: currentUser.userName || "",
             email: currentUser.email || "",
-            gender: currentUser.gender || "",
+            gender: currentUser.gender ? currentUser.gender as ProfileFormType['gender'] : undefined,
             address: currentUser.address || "",
             birthday: currentUser.birthday || "",
             phone: currentUser.phone || "",
@@ -44,7 +44,6 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
 
     const submitProfileForm = async (data: ProfileFormType) => {
         data = { ...data, imgUrl: imgFirebaseUrl || currentUser.imgUrl }
-        console.log(data);
         try {
             dispatch(updateUserLoading())
             const res = await fetch(`/api/user/update/${currentUser.id}`, {
@@ -62,7 +61,6 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                     className: 'bg-green-600 border-0 text-white rounded-[0.375rem]',
                     description: "Update user is successfully."
                 })
-                window.location.reload()
             } else {
                 //todo: res trả về error sau khi log in không thành công
                 const { success, message } = await res.json()
@@ -86,6 +84,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
         } finally {
+            profileForm.resetField("currentPassword")
             dispatch(updateUserFailure())
         }
     }
@@ -139,15 +138,31 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                         />
                         <FormField
                             disabled={isLoading}
+                            name="currentPassword"
+                            control={profileForm.control}
+                            render={({ field }) => (
+                                <FormItem className="col-span-1">
+                                    <FormLabel className="font-semibold flex gap-1">Current Password<span className="italic text-red-400">*</span></FormLabel>
+                                    <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
+                                        <Input type="password" placeholder="••••••••" {...field} />
+                                    </FormControl>
+                                    <FormMessage className="text-rose-800 text-xs" />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="col-span-1 flex flex-col gap-3">
+                        <FormField
+                            disabled={isLoading}
                             name="gender"
                             control={profileForm.control}
                             render={({ field }) => (
                                 <FormItem className="col-span-1">
-                                    <FormLabel className="font-semibold">Gender</FormLabel>
+                                    <FormLabel className="font-semibold flex gap-1">Gender</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl className="rounded-[0.375rem]">
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select gender" />
+                                                <SelectValue defaultValue={field.value} placeholder="Select gender" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="bg-white">
@@ -171,9 +186,6 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                 </FormItem>
                             )}
                         />
-
-                    </div>
-                    <div className="col-span-1 flex flex-col gap-3">
                         <FormField
                             disabled={isLoading}
                             name="address"
@@ -187,53 +199,42 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        /><FormField
-                            disabled={isLoading}
-                            name="currentPassword"
-                            control={profileForm.control}
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormLabel className="font-semibold flex gap-1">Current Password<span className="italic text-red-400">*</span></FormLabel>
-                                    <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                        <Input type="password" placeholder="••••••••" {...field} />
-                                    </FormControl>
-                                    <FormMessage className="text-rose-800 text-xs" />
-                                </FormItem>
-                            )}
                         />
-                        <FormField
-                            disabled={isLoading}
-                            name="newPassword"
-                            control={profileForm.control}
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormLabel className="font-semibold">New Password</FormLabel>
-                                    <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                        <Input type="password" placeholder="••••••••" {...field} />
-                                    </FormControl >
-                                    <FormMessage className="text-rose-800 text-xs" />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            disabled={isLoading}
-                            name="reNewPassword"
-                            control={profileForm.control}
-                            render={({ field }) => (
-                                <FormItem className="col-span-1">
-                                    <FormLabel className="font-semibold">Re-New Password</FormLabel>
-                                    <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
-                                        <Input type="password" placeholder="••••••••" {...field} />
-                                    </FormControl>
-                                    <FormMessage className="text-rose-800 text-xs" />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="bg-zinc-200 rounded-[0.45rem] p-3">
+                            <FormField
+                                disabled={isLoading}
+                                name="newPassword"
+                                control={profileForm.control}
+                                render={({ field }) => (
+                                    <FormItem className="col-span-1">
+                                        <FormLabel className="font-semibold">New Password</FormLabel>
+                                        <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
+                                            <Input type="password" placeholder="••••••••" {...field} />
+                                        </FormControl >
+                                        <FormMessage className="text-rose-800 text-xs" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                disabled={isLoading}
+                                name="reNewPassword"
+                                control={profileForm.control}
+                                render={({ field }) => (
+                                    <FormItem className="col-span-1">
+                                        <FormLabel className="font-semibold">Re-New Password</FormLabel>
+                                        <FormControl className="rounded-[0.375rem] placeholder:text-zinc-400">
+                                            <Input type="password" placeholder="••••••••" {...field} />
+                                        </FormControl>
+                                        <FormMessage className="text-rose-800 text-xs" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="w-full flex flex-row justify-end items-center gap-3">
                     <Button
-                        disabled={isLoading} variant="ghost" type="submit">Reset</Button>
+                        disabled={isLoading} variant="ghost" type="button" onClick={() => profileForm.reset()}>Reset</Button>
                     <Button
                         disabled={isLoading} variant="login" type="submit">{isLoading ? 'Loading...' : 'Save'}</Button>
                 </div>

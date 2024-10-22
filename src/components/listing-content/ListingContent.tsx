@@ -1,8 +1,9 @@
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { RootState } from "@/redux/store"
 
+import useGetListing from "@/hooks/useGetListing"
 import { formatter } from "@/lib/utils"
 import { ListingReduxType } from "@/types/types"
 import { saveAndUnsaveListing } from "@/features/user/userSlice"
@@ -23,8 +24,6 @@ import { FiHeart } from "react-icons/fi"
 import { MdDiscount } from "react-icons/md"
 
 const ListingContent = () => {
-    const [isLoading, setIsloading] = useState<boolean>(false)
-    const [dataListing, setDataListing] = useState<ListingReduxType>()
     const [openImgListingModal, setOpenImgListingModal] = useState<boolean>(false)
 
     const { currentUser } = useSelector((state: RootState) => state.user)
@@ -33,31 +32,10 @@ const ListingContent = () => {
     const { listingId } = useParams()
     const navigate = useNavigate()
 
-    const discountTag: string | undefined = dataListing?.discountPrice ? ((dataListing?.discountPrice / dataListing.regularPrice) * 100).toFixed(1) : undefined
+    //todo: GET DATA
+    const { dataListing } = useGetListing(`/api/listing/get-listing-content/${listingId}`)
 
-    useEffect(() => {
-        const getDataListing = async (): Promise<void> => {
-            setIsloading(true)
-            try {
-                const res = await fetch(`/api/listing/get-listing-content/${listingId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'Application/json'
-                    },
-                    cache: 'no-cache'
-                })
-                if (res.ok) {
-                    const dataListing = await res.json()
-                    setDataListing(dataListing)
-                }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsloading(false)
-            }
-        }
-        getDataListing()
-    }, [listingId])
+    const discountTag: string | undefined = dataListing?.discountPrice ? ((dataListing?.discountPrice / dataListing.regularPrice) * 100).toFixed(1) : undefined
 
     const copyLink = () => {
         navigator.clipboard.writeText(`${window.location.origin}/listing/${dataListing?.id}`)
@@ -93,9 +71,7 @@ const ListingContent = () => {
         }
     }
 
-    if (isLoading || !dataListing) {
-        return null
-    }
+    if (!dataListing) return null
 
     return (
         <div className="relative w-full md:w-[75%] m-auto flex flex-col gap-5">
