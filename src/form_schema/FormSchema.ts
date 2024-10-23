@@ -57,9 +57,7 @@ export const ProfileForm = z
       .string()
       .min(10, { message: "Phone number must be 10 numbers" })
       .max(10, { message: "Phone number must be 10 numbers" }),
-    gender: z
-      .enum(["Male", "Female"])
-      .optional(),
+    gender: z.enum(["Male", "Female"]).optional(),
     birthday: z.string().optional(),
     address: z.string().optional(),
     email: z.string().email({
@@ -103,9 +101,7 @@ export const ProfileOauthForm = z.object({
     .string()
     .min(10, { message: "Phone number must be 10 numbers" })
     .max(10, { message: "Phone number must be 10 numbers" }),
-    gender: z
-    .enum(["Male", "Female"])
-    .optional(),
+  gender: z.enum(["Male", "Female"]).optional(),
   birthday: z.string().optional(),
   address: z.string().optional(),
 });
