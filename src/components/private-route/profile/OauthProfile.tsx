@@ -31,7 +31,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
         defaultValues: {
             userName: currentUser.userName || "",
             phone: currentUser.phone || "",
-            gender: currentUser.gender || "",
+            gender: currentUser.gender ? currentUser.gender as ProfileFormType['gender'] : undefined,
             birthday: currentUser.birthday || "",
             address: currentUser.address || ""
         }
