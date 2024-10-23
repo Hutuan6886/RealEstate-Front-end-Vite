@@ -33,7 +33,7 @@ const ListingContent = () => {
     const navigate = useNavigate()
 
     //todo: GET DATA
-    const { dataListing } = useGetListing(`/api/listing/get-listing-content/${listingId}`)
+    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_CONTENT}/${listingId}`)
 
     const discountTag: string | undefined = dataListing?.discountPrice ? ((dataListing?.discountPrice / dataListing.regularPrice) * 100).toFixed(1) : undefined
 
@@ -52,7 +52,7 @@ const ListingContent = () => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`/api/save/homes/${userId}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_SAVED_HOMES}/${userId}`, {
                     method: "put",
                     headers: {
                         "Content-Type": "Application/json"

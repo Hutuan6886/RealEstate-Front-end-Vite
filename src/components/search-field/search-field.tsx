@@ -66,7 +66,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     useEffect(() => {
         const getAllListingName = async () => {
             try {
-                const res = await fetch("/api/listing/get-all-listing-name", {
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_ALL_LISTING_NAME}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "Application/json",

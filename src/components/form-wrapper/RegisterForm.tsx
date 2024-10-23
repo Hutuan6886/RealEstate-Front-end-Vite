@@ -34,7 +34,7 @@ const RegisterForm = () => {
     const submitRegister = async (data: RegisterFormType) => {
         try {
             setIsLoading(true)
-            const res = await fetch(`/api/auth/register`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_REGISTER}`, {
                 method: 'post',
                 cache: 'no-cache',
                 headers: {

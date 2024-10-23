@@ -58,7 +58,7 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`/api/save/homes/${userId}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_SAVED_HOMES}/${userId}`, {
                     method: "put",
                     headers: {
                         "Content-Type": "Application/json"

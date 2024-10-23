@@ -86,7 +86,7 @@ const EditListing = () => {
     }
 
     //todo: GET DATA LISTING
-    const { dataListing } = useGetListing(`/api/listing/get-listing-item/${listingId}`)
+    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_ITEM}/${listingId}`)
 
     useEffect(() => {
         //todo: DECLARE DATA LISTING TO FORM
@@ -161,7 +161,7 @@ const EditListing = () => {
     const submitUpdateListing = async (data: ManageListingFormType): Promise<void> => {
         setIsLoading(true)
         try {
-            const res = await fetch(`/api/listing/update-listing-item/${listingId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_PUT_UPDATE_LISTING_ITEM}/${listingId}`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json"

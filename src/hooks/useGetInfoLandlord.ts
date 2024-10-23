@@ -12,7 +12,7 @@ const useGetInfoLandlord = (listingId?: string) => {
       try {
         setIsLoading(true);
         const resquest = await fetch(
-          `/api/listing/get-listing-landlord/${listingId}`,
+          `${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_LANDLORD}/${listingId}`,
           {
             method: "GET",
             headers: {

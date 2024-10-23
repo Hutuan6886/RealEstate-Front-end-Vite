@@ -17,13 +17,16 @@ const useLogout = () => {
     //todo: Để thực hiện logout function: Post api logout -> tại api thực hiện clearCookie access_token. Tại front-end thực hiện update currentUser thành user rỗng
     try {
       dispatch(logoutUserLoading());
-      const res = await fetch("/api/auth/logout", {
-        method: "POST",
-        cache: "no-cache",
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_LOGOUT}`,
+        {
+          method: "POST",
+          cache: "no-cache",
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
       const { message } = await res.json();
       if (res.ok) {
         dispatch(logoutUserSuccess());

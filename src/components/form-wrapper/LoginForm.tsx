@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button'
 
 type LoginFormType = z.infer<typeof LoginFormSchema>
 const RegisterForm = () => {
+    console.log(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_CREDENTIAL_LOGIN}`);
+
     const navigate = useNavigate()
     const { toast } = useToast()
     //todo:Redux
@@ -35,7 +37,7 @@ const RegisterForm = () => {
     const submitLogin = async (data: LoginFormType) => {
         try {
             dispatch(loginUserLoading())
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_CREDENTIAL_LOGIN}`, {
                 headers: {
                     "Content-Type": "Application/json"
                 },

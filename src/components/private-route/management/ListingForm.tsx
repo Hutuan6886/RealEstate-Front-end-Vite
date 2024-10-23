@@ -187,7 +187,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
 
     const submitManagementForm = async (data: ManageListingFormType) => {
         try {
-            const res = await fetch('/api/listing/create', {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_POST_CREATE_LISTING}`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"

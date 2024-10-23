@@ -13,7 +13,7 @@ export const deletedImg = async (imgUrl: string, listingId?: string) => {
             try {
                 if (listingId) {
                     //todo: delete img trong DB để set lại dataListingItem
-                    await fetch(`/api/listing/delete-image/${listingId}`, {
+                    await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_DELETE_LISTING_IMG}/${listingId}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

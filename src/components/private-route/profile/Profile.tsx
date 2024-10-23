@@ -58,7 +58,7 @@ const Profile = () => {
     const deleteUser = async (userId: string) => {
         try {
             dispatch(deleteUserLoading())
-            const res = await fetch(`/api/user/delete/${userId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_DELETE_USER}/${userId}`, {
                 method: 'delete',
                 headers: {
                     "Content-Type": "application/json",
