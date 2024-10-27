@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { POST_CREATE_LISTING } from "@/data/apiUrl";
 import { uploadImg } from "@/functions/firebase/uploadFirebase";
 import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { addListing } from "@/features/user/userSlice";
@@ -26,12 +27,13 @@ import { TbMeterSquare } from "react-icons/tb";
 import { MdCloudUpload } from "react-icons/md";
 
 interface ListingFormProps {
+    title: string
     currentUser: UserReduxType
 }
 
 export type ManageListingFormType = z.infer<typeof ManageListingFormSchema>
 
-const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
+const ListingForm: React.FC<ListingFormProps> = ({ title, currentUser }) => {
     //todo: STATE
     const [valueOfferField, setValueOfferField] = useState<boolean>(false)
     const [formTypeValue, setFormTypeValue] = useState<string>()
@@ -187,7 +189,8 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
 
     const submitManagementForm = async (data: ManageListingFormType) => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_POST_CREATE_LISTING}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${POST_CREATE_LISTING}`, {
+                credentials: "include",
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -215,7 +218,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ currentUser }) => {
     return (
         <div className="w-full">
             <div className="flex flex-col gap-5">
-                <h3 className="text-3xl font-semibold text-center">Create Listing</h3>
+                <h3 className="text-3xl font-semibold text-center">{title}</h3>
                 <form className="w-full md:w-[90%] m-auto flex flex-col gap-4" onSubmit={handleSubmit(submitManagementForm)}>
                     <div className="w-full flex flex-row items-center justify-between md:justify-start">
                         <input disabled={isSubmitting || isLoadingUpload} type="file" name="imgUrl" accept="image/*" multiple className="cursor-pointer italic text-sm file:font-semibold file:text-sm file:px-3 file:py-2 file:bg-violet-50 file:rounded-[1rem] file:border-0" onChange={e => {

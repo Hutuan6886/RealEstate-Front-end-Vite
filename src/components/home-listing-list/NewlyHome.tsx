@@ -13,7 +13,7 @@ const HomeListingList = () => {
     return (
         <div>
             {
-                newlyListing
+                newlyListing.length !== 0
                     ? <ClickSlipList title="Newly listed homes">
                         {newlyListing?.map((listing: ListingReduxType) => (
                             <div key={listing.id}>
@@ -24,7 +24,7 @@ const HomeListingList = () => {
                     : null
             }
             {
-                hcmListing
+                hcmListing.length !== 0
                     ? <ClickSlipList title="Interesting finds for you in Hồ Chí Minh">
                         {hcmListing?.map((listing: ListingReduxType) => (
                             <div key={listing.id}>

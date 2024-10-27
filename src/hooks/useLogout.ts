@@ -20,6 +20,7 @@ const useLogout = () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_LOGOUT}`,
         {
+          credentials: "include",
           method: "POST",
           cache: "no-cache",
           headers: {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { LandlordType } from "@/types/types";
+import { GET_LISTING_LANDLORD } from "@/data/apiUrl";
 
 const useGetInfoLandlord = (listingId?: string) => {
   const [infoLandlord, setInfoLandlord] = useState<LandlordType>();
@@ -12,8 +13,9 @@ const useGetInfoLandlord = (listingId?: string) => {
       try {
         setIsLoading(true);
         const resquest = await fetch(
-          `${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_LANDLORD}/${listingId}`,
+          `${import.meta.env.VITE_API_ROUTE}${GET_LISTING_LANDLORD}/${listingId}`,
           {
+            credentials:"include",
             method: "GET",
             headers: {
               "Content-Type": "Application/json",

@@ -5,6 +5,7 @@ import { RootState } from "@/redux/store"
 
 import useGetListing from "@/hooks/useGetListing"
 import { formatter } from "@/lib/utils"
+import { GET_LISTING_CONTENT, SAVED_HOMES } from "@/data/apiUrl"
 import { ListingReduxType } from "@/types/types"
 import { saveAndUnsaveListing } from "@/features/user/userSlice"
 
@@ -33,7 +34,7 @@ const ListingContent = () => {
     const navigate = useNavigate()
 
     //todo: GET DATA
-    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_CONTENT}/${listingId}`)
+    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_CONTENT}/${listingId}`)
 
     const discountTag: string | undefined = dataListing?.discountPrice ? ((dataListing?.discountPrice / dataListing.regularPrice) * 100).toFixed(1) : undefined
 
@@ -52,8 +53,9 @@ const ListingContent = () => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_SAVED_HOMES}/${userId}`, {
-                    method: "put",
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${SAVED_HOMES}/${userId}`, {
+                    credentials: "include",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "Application/json"
                     },

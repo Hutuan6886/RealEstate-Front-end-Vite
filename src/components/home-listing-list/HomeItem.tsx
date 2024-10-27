@@ -6,6 +6,7 @@ import { RootState } from "@/redux/store";
 import { formatter } from "@/lib/utils"
 import { ListingReduxType } from "@/types/types";
 import { saveAndUnsaveListing } from "@/features/user/userSlice";
+import { SAVED_HOMES } from "@/data/apiUrl";
 
 import DropdownHomeItem from "./dropdown-homeitem";
 import SaleTagIcon from "./SaleTagIcon";
@@ -58,8 +59,9 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_SAVED_HOMES}/${userId}`, {
-                    method: "put",
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${SAVED_HOMES}/${userId}`, {
+                    credentials: "include",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "Application/json"
                     },

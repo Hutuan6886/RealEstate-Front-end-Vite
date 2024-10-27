@@ -1,6 +1,7 @@
 import { app } from "@/firebase";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 
+import { DELETE_LISTING_IMG } from "@/data/apiUrl";
 import { toast } from "@/components/ui/use-toast";
 
 export const deletedImg = async (imgUrl: string, listingId?: string) => {
@@ -13,7 +14,8 @@ export const deletedImg = async (imgUrl: string, listingId?: string) => {
             try {
                 if (listingId) {
                     //todo: delete img trong DB để set lại dataListingItem
-                    await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_DELETE_LISTING_IMG}/${listingId}`, {
+                    await fetch(`${import.meta.env.VITE_API_ROUTE}${DELETE_LISTING_IMG}/${listingId}`, {
+                        credentials: "include",
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

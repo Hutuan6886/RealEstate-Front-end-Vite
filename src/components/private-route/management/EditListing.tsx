@@ -8,6 +8,7 @@ import useGetListing from "@/hooks/useGetListing";
 import { uploadImg } from "@/functions/firebase/uploadFirebase";
 import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { ManageListingFormSchema } from "@/form_schema/FormSchema";
+import { GET_LISTING_ITEM, PUT_UPDATE_LISTING_ITEM } from "@/data/apiUrl";
 import { updateListing } from "@/features/user/userSlice";
 
 import InputLabel from "@/components/ui/input-label"
@@ -86,7 +87,7 @@ const EditListing = () => {
     }
 
     //todo: GET DATA LISTING
-    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_ITEM}/${listingId}`)
+    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_ITEM}/${listingId}`)
 
     useEffect(() => {
         //todo: DECLARE DATA LISTING TO FORM
@@ -161,7 +162,8 @@ const EditListing = () => {
     const submitUpdateListing = async (data: ManageListingFormType): Promise<void> => {
         setIsLoading(true)
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_PUT_UPDATE_LISTING_ITEM}/${listingId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${PUT_UPDATE_LISTING_ITEM}/${listingId}`, {
+                credentials: "include",
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json"

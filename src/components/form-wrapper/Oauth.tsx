@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { app } from "@/firebase"
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
 
+import { GOOGLE_LOGIN } from "@/data/apiUrl"
 import { RootState } from "@/redux/store"
 import { loginUserSuccess } from "@/features/user/userSlice"
 
@@ -31,8 +32,9 @@ const Oauth = () => {
             emailVerified: result.user.emailVerified ? new Date() : null,
         }
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GOOGLE_LOGIN}`, {
-                method: 'post',
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${GOOGLE_LOGIN}`, {
+                credentials: "include",
+                method: 'POST',
                 cache: 'no-cache',
                 headers: {
                     "Content-type": "application/json"

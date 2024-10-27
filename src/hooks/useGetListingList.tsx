@@ -10,6 +10,7 @@ const useGetListingList = (url: string) => {
             try {
                 setIsLoading(true)
                 const res = await fetch(url, {
+                    credentials: "include",
                     method: "GET",
                     headers: {
                         "Content-Type": "Application/json"

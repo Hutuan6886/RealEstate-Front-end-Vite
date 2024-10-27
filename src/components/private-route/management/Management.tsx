@@ -12,9 +12,9 @@ const Management = () => {
     return (
         <div className="w-full h-full">
             <div className="flex flex-col gap-9">
-                <ListingForm currentUser={currentUser} />
+                <ListingForm title="Create Listing" currentUser={currentUser} />
                 <ListingList
-                    title="Listing Product"
+                    title="My Listing Product"
                     dataListingList={currentUser.listing}
                 />
             </div>

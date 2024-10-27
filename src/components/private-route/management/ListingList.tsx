@@ -5,6 +5,7 @@ import { deleteObject, getStorage, ref } from "firebase/storage";
 
 import { RootState } from "@/redux/store";
 import { closeDeleteListingModal, openDeleteListingModal } from "@/features/listing/listingSlice";
+import { DELETE_LISTING_ITEM } from "@/data/apiUrl";
 import { deleteListing } from "@/features/user/userSlice";
 import { ListingReduxType } from "@/types/types";
 
@@ -16,10 +17,9 @@ interface ListingListProps {
   title: string;
   description?: string
   dataListingList: ListingReduxType[]
-  isLoading?: boolean
 }
 
-const ListingList: React.FC<ListingListProps> = ({ title, description, dataListingList, isLoading }) => {
+const ListingList: React.FC<ListingListProps> = ({ title, description, dataListingList }) => {
   //todo: STATE
   const isOpenDeleteModal: boolean = useSelector((state: RootState) => state.listing.isOpenDeleteModal)
 
@@ -28,7 +28,8 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
 
   const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[] | undefined): Promise<void> => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_ROUTE}}${import.meta.env.VITE_DELETE_LISTING_ITEM}/${listingId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_ROUTE}}${DELETE_LISTING_ITEM}/${listingId}`, {
+        credentials: "include",
         method: 'Delete',
         headers: {
           "Content-Type": "Application/json"
@@ -76,10 +77,6 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
       // Uh-oh, an error occurred!
       console.log(error);
     })
-  }
-
-  if (isLoading) {
-    return null
   }
 
   return (

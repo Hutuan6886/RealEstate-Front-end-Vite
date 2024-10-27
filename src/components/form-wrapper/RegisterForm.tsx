@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { REGISTER } from "@/data/apiUrl"
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { RegisterFormSchema } from "@/form_schema/FormSchema"
@@ -34,8 +35,9 @@ const RegisterForm = () => {
     const submitRegister = async (data: RegisterFormType) => {
         try {
             setIsLoading(true)
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_REGISTER}`, {
-                method: 'post',
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${REGISTER}`, {
+                credentials: "include",
+                method: 'POST',
                 cache: 'no-cache',
                 headers: {
                     "Content-Type": "application/json"

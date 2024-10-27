@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { POST_CREATE_CREDENTIAL_PROFILE } from "@/data/apiUrl";
 import { ProfileForm } from "@/form_schema/FormSchema";
 import { updateUserFailure, updateUserLoading, updateUserSuccess } from "@/features/user/userSlice";
 import { RootState } from "@/redux/store";
@@ -46,8 +47,9 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
         data = { ...data, imgUrl: imgFirebaseUrl || currentUser.imgUrl }
         try {
             dispatch(updateUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_POST_CREATE_CREDENTIAL_PROFILE}/${currentUser.id}`, {
-                method: 'post',
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${POST_CREATE_CREDENTIAL_PROFILE}/${currentUser.id}`, {
+                credentials: "include",
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },

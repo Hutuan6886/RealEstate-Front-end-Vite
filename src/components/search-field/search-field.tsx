@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from "zod";
 
+import { GET_ALL_LISTING_NAME } from "@/data/apiUrl";
 import { cn } from "@/lib/utils";
 import { cityData, provinceData, LocationType } from "@/data/location";
 import { SearchFormSchema } from "@/form_schema/FormSchema";
@@ -66,7 +67,8 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     useEffect(() => {
         const getAllListingName = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_ALL_LISTING_NAME}`, {
+                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${GET_ALL_LISTING_NAME}`, {
+                    credentials: "include",
                     method: "GET",
                     headers: {
                         "Content-Type": "Application/json",

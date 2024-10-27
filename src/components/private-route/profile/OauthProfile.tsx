@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { RootState } from "@/redux/store";
 import { ProfileOauthForm } from "@/form_schema/FormSchema"
+import { POST_CREATE_OAUTH_PROFILE } from "@/data/apiUrl";
 import { updateUserFailure, updateUserLoading, updateUserSuccess } from "@/features/user/userSlice";
 
 import { ToastAction } from "@/components/ui/toast";
@@ -42,8 +43,9 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
         console.log(data);
         try {
             dispatch(updateUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_POST_CREATE_OAUTH_PROFILE}/${currentUser.id}`, {
-                method: 'post',
+            const res = await fetch(`${import.meta.env.VITE_API_PORT}${POST_CREATE_OAUTH_PROFILE}/${currentUser.id}`, {
+                credentials: "include",
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { CREDENTIAL_LOGIN } from "@/data/apiUrl"
 import { loginUserFailure, loginUserLoading, loginUserSuccess } from "@/features/user/userSlice"
 import { RootState } from "@/redux/store"
 import { LoginFormSchema } from "@/form_schema/FormSchema"
@@ -37,9 +38,10 @@ const RegisterForm = () => {
     const submitLogin = async (data: LoginFormType) => {
         try {
             dispatch(loginUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_CREDENTIAL_LOGIN}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${CREDENTIAL_LOGIN}`, {
+                credentials: "include",
                 headers: {
-                    "Content-Type": "Application/json"
+                    "Content-Type": "application/json"
                 },
                 cache: 'no-cache',
                 method: 'POST',

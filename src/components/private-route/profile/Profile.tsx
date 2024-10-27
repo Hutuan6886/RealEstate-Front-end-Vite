@@ -6,6 +6,7 @@ import { deletedImg } from "@/functions/firebase/deletedFirebase";
 import { RootState } from "@/redux/store";
 import { closeDeleteUserModal, deleteUserFailure, deleteUserLoading, deleteUserSuccess, openDeleteUserModal } from "@/features/user/userSlice";
 
+import { DELETE_USER } from "@/data/apiUrl";
 import CredentialsProfile from "./CredentialsProfile";
 import OauthProfile from "./OauthProfile";
 import ModalDelete from "@/components/modal/ModalDelete"
@@ -58,8 +59,9 @@ const Profile = () => {
     const deleteUser = async (userId: string) => {
         try {
             dispatch(deleteUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_DELETE_USER}/${userId}`, {
-                method: 'delete',
+            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${DELETE_USER}/${userId}`, {
+                credentials: "include",
+                method: 'DELETE',
                 headers: {
                     "Content-Type": "application/json",
                 },

@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useDispatch } from "react-redux"
 
+import { GET_HCM_LISTING, GET_LISTING_LIST, GET_NEWLY_LISTING } from "@/data/apiUrl"
 import { saveAllListingList, saveHcmListingList, saveNewlyListingList } from "@/features/listing/listingSlice"
 
 import Carousel from "@/components/carousel/Carousel"
@@ -10,26 +11,30 @@ import HomeListingList from "@/components/home-listing-list/NewlyHome"
 
 function Home() {
   const dispatch = useDispatch()
+
   //todo: Get All listing and save it into redux
   useEffect(() => {
     //todo: fetch mutiple api sử dụng Promise bởi vì data không phụ thuộc nhau
     async function getDataHome() {
       Promise.all([
-        fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_NEWLY_LISTING}`, {
+        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_NEWLY_LISTING}`, {
+          credentials: "include",
           method: "GET",
           headers: {
             "Content-Type": "Application/json"
           },
           cache: "no-cache"
         }),
-        fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_HCM_LISTING}`, {
+        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_HCM_LISTING}`, {
+          credentials: "include",
           method: "GET",
           headers: {
             "Content-Type": "Application/json"
           },
           cache: "no-cache"
         }),
-        fetch(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_LIST}`, {
+        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_LIST}`, {
+          credentials: "include",
           method: "GET",
           headers: {
             "Content-Type": "Application/json"

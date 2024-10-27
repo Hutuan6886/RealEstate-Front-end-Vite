@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
 
 import useGetListingList from "@/hooks/useGetListingList"
+import { GET_LISTING_SEARCH } from "@/data/apiUrl"
 import useListingPagination from "@/hooks/useListingPagination"
 import { dataSort } from "@/data/dataSort"
 import { FilterFormType } from "@/types/types"
@@ -29,7 +30,7 @@ const Search = () => {
 
     //todo: GET DATA LISTINGLIST
     const urlSearchParams = new URLSearchParams(location.search)
-    const { dataListingList, sortListingFunction } = useGetListingList(`${import.meta.env.VITE_API_ROUTE}${import.meta.env.VITE_GET_LISTING_SEARCH}?${urlSearchParams.toString()}`)
+    const { dataListingList, sortListingFunction } = useGetListingList(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_SEARCH}?${urlSearchParams.toString()}`)
 
     //todo: LISTING PAGINATION
     const { currentPage, postsPerPage, lisingPaginationData, paginationNumberClick, previousPage, nextPage } = useListingPagination(dataListingList)
