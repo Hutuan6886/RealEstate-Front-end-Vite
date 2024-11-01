@@ -6,19 +6,22 @@ interface ImageItemProps {
     index: number
     imageActive?: number
     imgUrl: string
-    onDelete: () => void
-    className?: string
     handleDragStart: (index: number) => void
     handleDragEnd: () => void
+
+    className?: string
+    onDelete: () => void
+    onClick: () => void
 }
 
-const ImageItem: React.FC<ImageItemProps> = ({ index, imageActive, imgUrl, onDelete, className, handleDragStart, handleDragEnd }) => {
+const ImageItem: React.FC<ImageItemProps> = ({ index, imageActive, imgUrl, className, handleDragStart, handleDragEnd, onDelete, onClick }) => {
     return (
         <div className={cn(`w-fit rounded-[0.375rem] relative shadow-md transition ${imageActive === index ? "opacity-50" : null}`, className)}
             draggable={true}
         >
             <IoClose className="absolute top-1 right-1 text-xl cursor-pointer" onClick={onDelete} />
-            <img draggable src={imgUrl} alt={imgUrl} className="size-40 rounded-[0.375rem]"
+            <img draggable src={imgUrl} alt={imgUrl} className="size-40 rounded-[0.375rem] cursor-pointer"
+                onClick={onClick}
                 onDragStart={() => handleDragStart(index)}
                 onDragEnd={handleDragEnd} />
         </div>

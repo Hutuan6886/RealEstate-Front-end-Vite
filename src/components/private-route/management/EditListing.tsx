@@ -87,7 +87,7 @@ const EditListing = () => {
     }
 
     //todo: GET DATA LISTING
-    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_ITEM}/${listingId}`)
+    const { dataListing } = useGetListing(`${GET_LISTING_ITEM}/${listingId}`)
 
     useEffect(() => {
         //todo: DECLARE DATA LISTING TO FORM

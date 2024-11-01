@@ -1,4 +1,4 @@
-import { MouseEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -31,24 +31,21 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
     const currentUser = useSelector((state: RootState) => state.user.currentUser)
     const dispatch = useDispatch()
 
-    const [isHoverImg, setIsHoverImg] = useState<boolean>(false)
     const [imgIndex, setImgIndex] = useState<number>(0)
 
     const previousImg = () => {
-        const imgNumber: number = imgIndex - 1
-        if (imgNumber < 0) {
+        if (imgIndex === 0) {
             setImgIndex(homeItemData.imgUrl.length - 1)
         } else {
-            setImgIndex(imgNumber)
+            setImgIndex(imgIndex - 1)
         }
 
     }
     const nextImg = () => {
-        const imgNumber: number = imgIndex + 1
-        if (imgNumber === homeItemData.imgUrl.length) {
+        if (imgIndex === homeItemData.imgUrl.length - 1) {
             setImgIndex(0)
         } else {
-            setImgIndex(imgNumber)
+            setImgIndex(imgIndex + 1)
         }
     }
 
@@ -59,7 +56,7 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${SAVED_HOMES}/${userId}`, {
+                const res = await fetch(`${SAVED_HOMES}/${userId}`, {
                     credentials: "include",
                     method: "PUT",
                     headers: {
@@ -81,31 +78,32 @@ const HomeItem: React.FC<HomeItemProps> = ({ homeItemData, isSearchItem }) => {
     return (
         <div className={`relative ${isSearchItem ? "w-full" : "w-fit"} h-full`}>
             {homeItemData.discountPrice && homeItemData.discountPrice > 0
-                && <SaleTagIcon className="absolute z-10 top-0 left-0" />}
-            <div className="flex flex-col items-start gap-2 overflow-hidden">
-                <div className={`${isSearchItem ? "w-full h-[240px]" : "w-[240px] h-[150px]"}  relative rounded-[0.45rem] cursor-pointer overflow-hidden`}
-                    onMouseMove={(e: MouseEvent) => {
-                        if (e.target === imgRef.current) {
-                            setIsHoverImg(true)
+                && <SaleTagIcon className="absolute z-20 top-0 left-0" />}
+            <div className="flex flex-col items-start gap-2 ">
+                <div className={`${isSearchItem ? "w-full h-[220px]" : "w-[240px] h-[140px]"}  relative rounded-[0.45rem] overflow-hidden cursor-pointer group`}>
+                    <div className="w-full h-full flex flex-row justify-start">
+                        {
+                            homeItemData.imgUrl.map((imgUrl, i) => (
+                                <img key={i} ref={imgRef} src={imgUrl} alt={imgUrl}
+                                    style={{
+                                        translate: `${-100 * imgIndex}%`,
+                                    }}
+                                    className={`min-w-full ${imgIndex === i ? "z-10" : null} group-hover:scale-105 transition-all duration-300`}
+                                    onClick={() => { navigate(`/listing/${homeItemData.id}`) }} />
+                            ))
                         }
-                    }}
-                    onMouseLeave={() => {
-                        setIsHoverImg(false)
-                    }}
-                >
-                    <img ref={imgRef} src={homeItemData.imgUrl[imgIndex]} alt={homeItemData.imgUrl[imgIndex]} className={`w-full h-full ${isHoverImg ? "scale-105" : null} transition-transform duration-500`}
-                        onClick={() => { navigate(`/listing/${homeItemData.id}`) }} />
-                    {isSearchItem ?
-                        <>
-                            <div className={`${isHoverImg ? "block" : "hidden"} absolute top-1/2 -translate-y-1/2 left-1 text-white`}
-                                onClick={previousImg}><FaCaretLeft size={35} /></div>
-                            <div className={`${isHoverImg ? "block" : "hidden"} absolute top-1/2 -translate-y-1/2 right-1 text-white`}
-                                onClick={nextImg} ><FaCaretRight size={35} /></div>
-                        </> : null}
-                    <div className="absolute top-2 right-2 ">
+                    </div>
+                    <button className={` absolute z-10 top-1/2 -translate-y-1/2 left-1 text-white opacity-0 group-hover:opacity-70 transition-all`}
+                        onClick={previousImg}><FaCaretLeft size={35} /></button>
+                    <button className={`absolute z-10 top-1/2 -translate-y-1/2 right-1 text-white opacity-0 group-hover:opacity-70 transition-all`}
+                        onClick={nextImg} ><FaCaretRight size={35} /></button>
+                    <div className="absolute z-10 top-2 right-2 ">
                         <div className="flex flex-row items-center justify-center gap-3">
-                            {homeItemData.userId === currentUser.id ? <FaHouseUser className="text-yellow-500" /> : null}
-                            <p style={{ margin: 0 }} className="bg-white opacity-80 rounded-[0.375rem] px-2 py-1 text-xs font-bold text-slate-800" onClick={() => { navigate(`/search?formType=${homeItemData.formType}`) }}>{homeItemData.formType}</p>
+                            {homeItemData.userId === currentUser.id
+                                ? <FaHouseUser className="text-yellow-500 hover:scale-110 transition" onClick={() => navigate("/management")} />
+                                : null}
+                            <p style={{ margin: 0 }} className={`${homeItemData.formType === "Sell" ? "border-2 border-yellow-500 text-yellow-500" : "border-2 border-white text-white"} rounded-[0.375rem] px-2 py-1 text-xs font-bold text-slate-800 hover:opacity-60 transition`}
+                                onClick={() => { navigate(`/search?formType=${homeItemData.formType}`) }}>{homeItemData.formType}</p>
                             <div
                                 onClick={() => savedHomes(currentUser.id, homeItemData)}
                             >

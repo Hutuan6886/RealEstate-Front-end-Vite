@@ -47,7 +47,7 @@ const CredentialsProfile: React.FC<CredentialsProfileProps> = ({ imgFirebaseUrl 
         data = { ...data, imgUrl: imgFirebaseUrl || currentUser.imgUrl }
         try {
             dispatch(updateUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${POST_CREATE_CREDENTIAL_PROFILE}/${currentUser.id}`, {
+            const res = await fetch(`${POST_CREATE_CREDENTIAL_PROFILE}/${currentUser.id}`, {
                 credentials: "include",
                 method: 'POST',
                 headers: {

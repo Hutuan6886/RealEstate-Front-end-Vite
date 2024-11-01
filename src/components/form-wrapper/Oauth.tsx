@@ -32,7 +32,7 @@ const Oauth = () => {
             emailVerified: result.user.emailVerified ? new Date() : null,
         }
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${GOOGLE_LOGIN}`, {
+            const res = await fetch(GOOGLE_LOGIN, {
                 credentials: "include",
                 method: 'POST',
                 cache: 'no-cache',

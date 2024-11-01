@@ -30,7 +30,7 @@ const Search = () => {
 
     //todo: GET DATA LISTINGLIST
     const urlSearchParams = new URLSearchParams(location.search)
-    const { dataListingList, sortListingFunction } = useGetListingList(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_SEARCH}?${urlSearchParams.toString()}`)
+    const { dataListingList, sortListingFunction } = useGetListingList(`${GET_LISTING_SEARCH}?${urlSearchParams.toString()}`)
 
     //todo: LISTING PAGINATION
     const { currentPage, postsPerPage, lisingPaginationData, paginationNumberClick, previousPage, nextPage } = useListingPagination(dataListingList)

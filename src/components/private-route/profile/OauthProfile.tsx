@@ -43,7 +43,7 @@ const OauthProfile: React.FC<OauthProfileProps> = ({ imgFirebaseUrl }) => {
         console.log(data);
         try {
             dispatch(updateUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_PORT}${POST_CREATE_OAUTH_PROFILE}/${currentUser.id}`, {
+            const res = await fetch(`${POST_CREATE_OAUTH_PROFILE}/${currentUser.id}`, {
                 credentials: "include",
                 method: 'POST',
                 headers: {

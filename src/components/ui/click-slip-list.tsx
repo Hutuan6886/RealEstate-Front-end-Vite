@@ -99,8 +99,8 @@ const ClickSlipList: React.FC<HomeListProps> = ({ children, title, description }
                 >
                     {children}
                 </div>
-                {!isHiddenLeftButton ? <div className="absolute top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
-                {!isHiddenRightButton ? <div className="absolute top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
+                {!isHiddenLeftButton ? <div className="absolute z-10 top-1/2 -translate-y-1/2 left-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingLeft}><FaChevronLeft /></div> : null}
+                {!isHiddenRightButton ? <div className="absolute z-10 top-1/2 -translate-y-1/2 right-0 p-3 bg-white text-black border shadow-md cursor-pointer rounded-[25px] active:scale-110 transition" onClick={HandleSlidingRight}><FaChevronRight /></div> : null}
 
             </div>
         </TitleComponent>

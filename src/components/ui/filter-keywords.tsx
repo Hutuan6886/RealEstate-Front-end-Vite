@@ -37,7 +37,7 @@ const FilterKeywords = <T extends FieldValues>({ label, nameField, setValue, wat
                         <input value={inputValue} type="text" className="w-full p-2 border border-zinc-700 rounded-[0.375rem]" placeholder="e.g. Pool, Parking..." onChange={handleKeywords} />
                         <Button type="button" className="text-teal-700 bg-white border border-teal-700 hover:bg-teal-100" onClick={() => { submitKeywords(inputValue) }}>Add</Button>
                     </div>
-                    <div className="flex flex-row items-center justify-start gap-2">
+                    <div className="flex flex-row flex-wrap items-center justify-start gap-2">
                         {
                             watch(nameField).map((keyword: string, i: number) => (
                                 <div key={i} className="flex flex-row items-center justify-center gap-1 bg-zinc-200 hover:bg-zinc-300 rounded-[0.375rem] px-2 py-0.5">

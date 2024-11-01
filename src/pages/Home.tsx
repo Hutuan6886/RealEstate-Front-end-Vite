@@ -17,7 +17,7 @@ function Home() {
     //todo: fetch mutiple api sử dụng Promise bởi vì data không phụ thuộc nhau
     async function getDataHome() {
       Promise.all([
-        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_NEWLY_LISTING}`, {
+        fetch(GET_NEWLY_LISTING, {
           credentials: "include",
           method: "GET",
           headers: {
@@ -25,7 +25,7 @@ function Home() {
           },
           cache: "no-cache"
         }),
-        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_HCM_LISTING}`, {
+        fetch(GET_HCM_LISTING, {
           credentials: "include",
           method: "GET",
           headers: {
@@ -33,7 +33,7 @@ function Home() {
           },
           cache: "no-cache"
         }),
-        fetch(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_LIST}`, {
+        fetch(GET_LISTING_LIST, {
           credentials: "include",
           method: "GET",
           headers: {

@@ -3,6 +3,7 @@ import { Fragment, useState } from "react"
 import ImageItem from "./ImageItem"
 import ImageDrop from "./ImageDrop"
 import { FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form"
+import ImageModal from "@/components/modal/ImageModal"
 
 type ImageListProps<T extends FieldValues> = {
     imageList: string[]
@@ -12,6 +13,9 @@ type ImageListProps<T extends FieldValues> = {
 }
 
 export const ImageList = <T extends FieldValues>({ imageList, pathName, setValue, deleteImgStorage }: ImageListProps<T>) => {
+
+    const [openImageModal, setOpenImageModal] = useState<boolean>(false)
+    const [imgIndex, setImgIndex] = useState<number>()
 
     const [imageActive, setImageActive] = useState<number | undefined>(undefined)
 
@@ -56,49 +60,61 @@ export const ImageList = <T extends FieldValues>({ imageList, pathName, setValue
 
     if (!imageList) return
 
-    return <div >
-        <div className={`w-full flex flex-row flex-wrap items-center justify-betweent gap-2 ransition-all `}
-        >
-            {imageList.map((imgUrl, i) => (
-                <Fragment key={i}>
-                    {
-                        i === 0
-                            ? <>
-                                <div className="flex flex-col gap-1 border-4 border-teal-700 rounded-[0.45rem] px-4 py-2">
-                                    <p className="italic text-sm font-semibold text-teal-700 ">Backgound</p>
-                                    <div className="flex flex-row flex-wrap items-center justify-betweent gap-1 ransition-all">
-                                        <ImageDrop index={0}
-                                            imageActive={imageActive}
-                                            handleDrop={handleDrop} />
-                                        <ImageItem
-                                            index={i}
-                                            imageActive={imageActive}
-                                            imgUrl={imgUrl}
-                                            onDelete={() => { deleteImgStorage(imgUrl) }}
-                                            handleDragStart={handleDragStart}
-                                            handleDragEnd={handleDragEnd}
-                                        />
-                                    </div>
+    return <div className={`w-full flex flex-row flex-wrap items-center justify-betweent gap-2 ransition-all `}>
+        {imageList.map((imgUrl, i) => (
+            <Fragment key={i}>
+                {
+                    i === 0
+                        ? <>
+                            <div className="flex flex-col gap-1 border-4 border-teal-700 rounded-[0.45rem] px-4 py-2">
+                                <p className="italic text-sm font-semibold text-teal-700 ">Backgound</p>
+                                <div className="flex flex-row flex-wrap items-center justify-betweent gap-1 ransition-all">
+                                    <ImageDrop index={0}
+                                        imageActive={imageActive}
+                                        handleDrop={handleDrop} />
+                                    <ImageItem
+                                        index={i}
+                                        imageActive={imageActive}
+                                        imgUrl={imgUrl}
+                                        handleDragStart={handleDragStart}
+                                        handleDragEnd={handleDragEnd}
+
+                                        onDelete={() => { deleteImgStorage(imgUrl) }}
+                                        onClick={() => {
+                                            setOpenImageModal(true)
+                                            setImgIndex(i + 1)
+                                        }}
+                                    />
                                 </div>
-                                <ImageDrop index={i + 1}
-                                    imageActive={imageActive}
-                                    handleDrop={handleDrop} />
-                            </>
-                            : <>
-                                <ImageItem
-                                    index={i}
-                                    imageActive={imageActive}
-                                    imgUrl={imgUrl}
-                                    onDelete={() => { deleteImgStorage(imgUrl) }}
-                                    handleDragStart={handleDragStart}
-                                    handleDragEnd={handleDragEnd} />
-                                <ImageDrop index={i + 1}
-                                    imageActive={imageActive}
-                                    handleDrop={handleDrop} />
-                            </>
-                    }
-                </Fragment>
-            ))}
-        </div>
+                            </div>
+                            <ImageDrop index={i + 1}
+                                imageActive={imageActive}
+                                handleDrop={handleDrop} />
+                        </>
+                        : <>
+                            <ImageItem
+                                index={i}
+                                imageActive={imageActive}
+                                imgUrl={imgUrl}
+                                handleDragStart={handleDragStart}
+                                handleDragEnd={handleDragEnd}
+
+                                onDelete={() => { deleteImgStorage(imgUrl) }}
+                                onClick={() => {
+                                    setOpenImageModal(true)
+                                    setImgIndex(i + 1)
+                                }}
+                            />
+                            <ImageDrop index={i + 1}
+                                imageActive={imageActive}
+                                handleDrop={handleDrop} />
+                        </>
+                }
+
+            </Fragment>
+        ))}
+        {
+            openImageModal && imgIndex && <ImageModal imgUrl={imageList} index={imgIndex} onClose={() => setOpenImageModal(false)} />
+        }
     </div>
 }

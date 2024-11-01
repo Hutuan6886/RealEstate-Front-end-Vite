@@ -28,7 +28,7 @@ const ListingList: React.FC<ListingListProps> = ({ title, description, dataListi
 
   const deleteListingItem = async (listingId: string | undefined, listingImgUrl: string[] | undefined): Promise<void> => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_ROUTE}}${DELETE_LISTING_ITEM}/${listingId}`, {
+      const res = await fetch(`${DELETE_LISTING_ITEM}/${listingId}`, {
         credentials: "include",
         method: 'Delete',
         headers: {

@@ -189,7 +189,7 @@ const ListingForm: React.FC<ListingFormProps> = ({ title, currentUser }) => {
 
     const submitManagementForm = async (data: ManageListingFormType) => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${POST_CREATE_LISTING}`, {
+            const res = await fetch(POST_CREATE_LISTING, {
                 credentials: "include",
                 method: 'POST',
                 headers: {

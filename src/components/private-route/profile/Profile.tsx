@@ -59,7 +59,7 @@ const Profile = () => {
     const deleteUser = async (userId: string) => {
         try {
             dispatch(deleteUserLoading())
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${DELETE_USER}/${userId}`, {
+            const res = await fetch(`${DELETE_USER}/${userId}`, {
                 credentials: "include",
                 method: 'DELETE',
                 headers: {

@@ -35,7 +35,7 @@ const RegisterForm = () => {
     const submitRegister = async (data: RegisterFormType) => {
         try {
             setIsLoading(true)
-            const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${REGISTER}`, {
+            const res = await fetch(REGISTER, {
                 credentials: "include",
                 method: 'POST',
                 cache: 'no-cache',

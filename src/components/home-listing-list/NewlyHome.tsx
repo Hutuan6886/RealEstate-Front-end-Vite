@@ -13,9 +13,9 @@ const HomeListingList = () => {
     return (
         <div>
             {
-                newlyListing.length !== 0
+                newlyListing.length > 0
                     ? <ClickSlipList title="Newly listed homes">
-                        {newlyListing?.map((listing: ListingReduxType) => (
+                        {newlyListing.map((listing: ListingReduxType) => (
                             <div key={listing.id}>
                                 <HomeItem homeItemData={listing} />
                             </div>
@@ -24,9 +24,9 @@ const HomeListingList = () => {
                     : null
             }
             {
-                hcmListing.length !== 0
+                hcmListing.length > 0
                     ? <ClickSlipList title="Interesting finds for you in Hồ Chí Minh">
-                        {hcmListing?.map((listing: ListingReduxType) => (
+                        {hcmListing.map((listing: ListingReduxType) => (
                             <div key={listing.id}>
                                 <HomeItem homeItemData={listing} />
                             </div>

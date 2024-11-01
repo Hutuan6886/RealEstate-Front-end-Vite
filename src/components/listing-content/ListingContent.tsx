@@ -23,6 +23,7 @@ import { TbMeterSquare } from "react-icons/tb"
 import { FaHeart, FaLocationDot } from "react-icons/fa6";
 import { FiHeart } from "react-icons/fi"
 import { MdDiscount } from "react-icons/md"
+import ListingMap from "../map/ListingMap"
 
 const ListingContent = () => {
     const [openImgListingModal, setOpenImgListingModal] = useState<boolean>(false)
@@ -34,7 +35,7 @@ const ListingContent = () => {
     const navigate = useNavigate()
 
     //todo: GET DATA
-    const { dataListing } = useGetListing(`${import.meta.env.VITE_API_ROUTE}${GET_LISTING_CONTENT}/${listingId}`)
+    const { dataListing } = useGetListing(`${GET_LISTING_CONTENT}/${listingId}`)
 
     const discountTag: string | undefined = dataListing?.discountPrice ? ((dataListing?.discountPrice / dataListing.regularPrice) * 100).toFixed(1) : undefined
 
@@ -53,7 +54,7 @@ const ListingContent = () => {
             }
             else {
                 //todo: push to db
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${SAVED_HOMES}/${userId}`, {
+                const res = await fetch(`${SAVED_HOMES}/${userId}`, {
                     credentials: "include",
                     method: "PUT",
                     headers: {
@@ -185,6 +186,9 @@ const ListingContent = () => {
                 <div className="hidden lg:block col-span-1">
                     {currentUser.id !== dataListing?.userId && <RequestInfoForm dataListing={dataListing} />}
                 </div>
+            </div>
+            <div className="hidden md:block w-full h-[200px] lg:h-[300px]">
+                <ListingMap dataListing={dataListing} lat={parseFloat(dataListing.location.latitude)} lng={parseFloat(dataListing.location.longitude)} />
             </div>
             <HomeHighlights dataListing={dataListing} />
         </div >

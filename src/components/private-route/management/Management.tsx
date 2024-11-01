@@ -14,7 +14,7 @@ const Management = () => {
             <div className="flex flex-col gap-9">
                 <ListingForm title="Create Listing" currentUser={currentUser} />
                 <ListingList
-                    title="My Listing Product"
+                    title="Product Listing"
                     dataListingList={currentUser.listing}
                 />
             </div>

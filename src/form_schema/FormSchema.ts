@@ -115,7 +115,7 @@ export const ManageListingFormSchema = z
     name: z.string().min(1, { message: "Name is required!" }),
     description: z.string().min(1, { message: "Description is required!" }),
     address: z.object({
-      number: z.string().min(1, { message: "Number is required!" }),
+      number: z.string().optional(),
       street: z.string().min(1, { message: "Street is required!" }),
       ward: z.string().min(1, { message: "Ward is required!" }),
       district: z.string().min(1, { message: "District is required!" }),

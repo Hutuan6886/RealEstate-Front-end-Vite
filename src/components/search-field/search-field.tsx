@@ -67,7 +67,7 @@ const SearchField: React.FC<SearchFieldProps> = ({ className, placeholder }) => 
     useEffect(() => {
         const getAllListingName = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_ROUTE}${GET_ALL_LISTING_NAME}`, {
+                const res = await fetch(GET_ALL_LISTING_NAME, {
                     credentials: "include",
                     method: "GET",
                     headers: {

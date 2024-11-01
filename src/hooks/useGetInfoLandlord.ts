@@ -12,17 +12,14 @@ const useGetInfoLandlord = (listingId?: string) => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const resquest = await fetch(
-          `${import.meta.env.VITE_API_ROUTE}${GET_LISTING_LANDLORD}/${listingId}`,
-          {
-            credentials:"include",
-            method: "GET",
-            headers: {
-              "Content-Type": "Application/json",
-            },
-            cache: "no-cache",
-          }
-        );
+        const resquest = await fetch(`${GET_LISTING_LANDLORD}/${listingId}`, {
+          credentials: "include",
+          method: "GET",
+          headers: {
+            "Content-Type": "Application/json",
+          },
+          cache: "no-cache",
+        });
         if (resquest.ok) {
           const dataInfoLandlord = await resquest.json();
           setInfoLandlord(dataInfoLandlord);
